@@ -22,7 +22,7 @@ export default defineConfig({
 
   build: {
     outDir: fileURLToPath(
-      new URL('../backend/public/build/', import.meta.url)
+      new URL('../backend_symfony/public/build/', import.meta.url)
     ),
     emptyOutDir: true,
     manifest: true,
