@@ -1,0 +1,4 @@
+http:
+    port: 8000
+    allow_http: true
+    no_tls: true

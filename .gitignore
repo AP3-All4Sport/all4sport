@@ -1,0 +1,17 @@
+# Dépendances
+/backend_symfony/vendor/
+/frontend_react/node_modules/
+
+# Cache et journaux Symfony
+/backend_symfony/var/
+
+# Fichiers compilés
+/backend_symfony/public/build/
+/frontend_react/dist/
+
+# Configuration locale et secrets
+/backend_symfony/.env.local
+/backend_symfony/.env.local.php
+/backend_symfony/.env.*.local
+/frontend_react/.env.local
+/frontend_react/.env.*.local
