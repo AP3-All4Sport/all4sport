@@ -79,7 +79,7 @@ npm run dev
 
 ### Ouvrir le site
 
-Allez sur **[http://127.0.0.1:8000/react](http://127.0.0.1:8000/react)**.
+Allez sur **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**.
 
 C’est cette adresse qui teste le chargement de React par Twig. Utilisez exactement `127.0.0.1` et HTTP avec la configuration actuelle : l’origine autorisée par Vite est `http://127.0.0.1:8000`.
 
@@ -94,7 +94,7 @@ Pour arrêter : faites **Ctrl + C** dans chacun des deux terminaux. Si Symfony c
 
 ## 5. Comment les deux projets sont reliés
 
-1. Le navigateur demande `/react` à Symfony.
+1. Le navigateur demande `/` à Symfony.
 2. `FrontController.php` renvoie `front/index.html.twig`.
 3. Twig crée une `<div id="root"></div>` et ajoute les scripts de Vite.
 4. `frontend_react/src/main.jsx` trouve cette div et y affiche `<App />`.
@@ -107,7 +107,7 @@ Les noms doivent correspondre :
 | `frontend_react/vite.config.js` | `base: '/build/'` et sortie vers `../backend_symfony/public/build/` |
 | `frontend_react/vite.config.js` | Plugins React et Symfony activés |
 | `backend_symfony/config/packages/pentatrion_vite.yaml` | `build_directory: build` sous `pentatrion_vite:` |
-| `backend_symfony/src/Controller/FrontController.php` | Route `/react` qui rend `front/index.html.twig` |
+| `backend_symfony/src/Controller/FrontController.php` | Route `/` qui rend `front/index.html.twig` |
 | `backend_symfony/templates/front/index.html.twig` | Div `root` et fonctions Twig ci-dessous |
 
 Dans la page Twig :
@@ -123,7 +123,7 @@ Dans la page Twig :
 
 L’option `dependency: 'react'` prépare le rechargement de React en développement. Voir la [documentation des fonctions Twig](https://symfony-vite.pentatrion.com/guide/twig-functions.html).
 
-Le fichier `frontend_react/index.html` n’est pas le HTML utilisé pour la route Symfony `/react` : c’est Twig qui fournit cette page.
+Le fichier `frontend_react/index.html` n’est pas le HTML utilisé pour la route Symfony `/` : c’est Twig qui fournit cette page.
 
 ## 6. Où coder ?
 
@@ -152,7 +152,7 @@ Le bundle peut ensuite charger les fichiers compilés sans serveur Vite. **Cette
 - Partagez le code, les configurations, `composer.json`, `composer.lock`, `package.json` et `package-lock.json`.
 - Gardez `backend_symfony/vendor/`, `frontend_react/node_modules/`, les caches et les fichiers locaux de connexion hors de Git via les `.gitignore`.
 - Après avoir récupéré des changements de dépendances, relancez `composer install` dans `backend_symfony` et `npm install` dans `frontend_react`.
-- Avant d’envoyer vos changements, ouvrez `127.0.0.1:8000/react` et vérifiez la console du navigateur.
+- Avant d’envoyer vos changements, ouvrez `127.0.0.1:8000/` et vérifiez la console du navigateur.
 
 ## Le pense-bête 🚀
 
@@ -169,6 +169,6 @@ symfony serve
 npm run dev
 ```
 
-**Navigateur : [http://127.0.0.1:8000/react](http://127.0.0.1:8000/react)**
+**Navigateur : [http://127.0.0.1:8000/](http://127.0.0.1:8000/)**
 
 

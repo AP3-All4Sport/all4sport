@@ -22,10 +22,14 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                default_target_path: app_account
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                target: app_login
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -35,21 +39,10 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/compte, roles: ROLE_USER }
 
 when@test:
     security:
-        providers:
-            test_user_provider:
-                memory:
-                    users:
-                        test@example.com:
-                            password: password
-                            roles: [ROLE_USER]
-        firewalls:
-            main:
-                provider: test_user_provider
         password_hashers:
             # Password hashers are resource-intensive by design to ensure security.
             # In tests, it's safe to reduce their cost to improve performance.

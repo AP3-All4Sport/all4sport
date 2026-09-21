@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import logo from '../assets/brand/all4sport-logo.svg'
+import logo from '../assets/brand/all4sport-logo-dark.svg'
 import Icon from './Icon.jsx'
 
 const navigationItems = [
@@ -52,7 +52,7 @@ function getCategoryUrl(universe, category) {
     parameters.set('categorie', category)
   }
 
-  return `/react?${parameters.toString()}`
+  return `/?${parameters.toString()}`
 }
 
 export default function Header() {
@@ -100,7 +100,7 @@ export default function Header() {
   return (
     <header className="site-header" id="haut-de-page" tabIndex={-1}>
       <div className="header-main site-container">
-        <a className="header-logo" href="/react" aria-label="All4Sport — Accueil">
+        <a className="header-logo" href="/" aria-label="All4Sport — Accueil">
           <img src={logo} alt="All4Sport" width="280" height="66" />
         </a>
 

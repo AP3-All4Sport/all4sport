@@ -69,7 +69,7 @@ export default function Footer() {
       <div className="footer-dark">
         <div className="footer-main site-container">
           <div className="footer-brand">
-            <a href="/react" aria-label="All4Sport — Accueil">
+            <a href="/" aria-label="All4Sport — Accueil">
               <img className="footer-logo" src={logo} alt="All4Sport" width="210" height="50" />
             </a>
             <p>Le sport nous rassemble. Chez All4Sport, nous croyons en un avenir plus responsable, plus solidaire et plus actif.</p>

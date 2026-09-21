@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte | All4Sport{% endblock %}
+
+{% block body %}
+    <section class="account-card">
+        <p class="eyebrow">Espace personnel</p>
+        <h1>Bonjour {{ app.user.prenom }}</h1>
+        <p class="account-intro">Vous êtes connecté à votre compte All4Sport.</p>
+
+        <dl class="account-details">
+            <div>
+                <dt>Nom</dt>
+                <dd>{{ app.user.prenom }} {{ app.user.nom }}</dd>
+            </div>
+            <div>
+                <dt>Adresse e-mail</dt>
+                <dd>{{ app.user.email }}</dd>
+            </div>
+            {% if app.user.telephone %}
+                <div>
+                    <dt>Téléphone</dt>
+                    <dd>{{ app.user.telephone }}</dd>
+                </div>
+            {% endif %}
+        </dl>
+
+        <div class="account-actions">
+            <a class="button button-primary" href="{{ path('app_change_password') }}">Modifier mon mot de passe</a>
+            <a class="button button-secondary" href="{{ logout_path() }}">Se déconnecter</a>
+        </div>
+    </section>
+{% endblock %}

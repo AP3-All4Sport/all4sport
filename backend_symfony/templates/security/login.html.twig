@@ -1,38 +1,116 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Mon compte | All4Sport{% endblock %}
 
 {% block body %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+    <nav class="account-breadcrumb" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_react') }}">Accueil</a>
+        <span aria-hidden="true">›</span>
+        <span>Mon compte</span>
+    </nav>
 
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+    <header class="account-heading">
+        <h1>Mon compte</h1>
+        <p>Connectez-vous ou créez votre compte All4Sport.</p>
+    </header>
+
+    <div class="auth-grid">
+        <section class="auth-panel auth-panel-login">
+            <h2>Déjà client&nbsp;?</h2>
+            <p class="panel-intro">Connectez-vous pour accéder à vos commandes et à vos avantages.</p>
+
+            {% if error %}
+                <div class="flash flash-error" role="alert">Adresse e-mail ou mot de passe incorrect.</div>
+            {% endif %}
+
+            <form method="post" class="account-form">
+                <div class="form-field">
+                    <label for="username">Adresse e-mail</label>
+                    <div class="input-with-icon">
+                        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg>
+                        <input type="email" value="{{ last_username }}" name="_username" id="username" placeholder="exemple@email.fr" autocomplete="email" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-with-icon">
+                        <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                        <input type="password" name="_password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember-choice">
+                        <input type="checkbox" name="_remember_me">
+                        <span>Se souvenir de moi</span>
+                    </label>
+                    <a href="#aide-connexion">Mot de passe oublié&nbsp;?</a>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button class="button button-primary login-submit" type="submit">
+                    Se connecter
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <div class="social-separator"><span>ou</span></div>
+            <div class="social-login" aria-label="Autres méthodes de connexion bientôt disponibles">
+                <button type="button" disabled title="Connexion Google bientôt disponible">
+                    <span class="google-mark" aria-hidden="true">G</span>
+                    Continuer avec Google
+                </button>
+                <button type="button" disabled title="Connexion Apple bientôt disponible">
+                    <span class="apple-mark" aria-hidden="true">●</span>
+                    Continuer avec Apple
+                </button>
             </div>
-        {% endif %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Password</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            <p class="security-note">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="10" width="12" height="10" rx="2"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg>
+                Vos informations sont protégées et sécurisées.
+            </p>
+        </section>
 
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
+        <section class="auth-panel auth-panel-register">
+            <h2>Nouveau chez All4Sport&nbsp;?</h2>
+            <p class="panel-intro">Créez votre compte gratuitement et profitez de tous vos avantages.</p>
 
-            <div class="checkbox mb-3">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
-            </div>
-        #}
+            <ul class="benefit-list">
+                <li>
+                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="m8 14 16-9 16 9v20l-16 9-16-9zM8 14l16 9 16-9M24 23v20"/></svg>
+                    <div><strong>Suivez vos commandes</strong><span>Consultez leur statut à tout moment.</span></div>
+                </li>
+                <li>
+                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M24 41S7 30 7 17a9 9 0 0 1 17-4 9 9 0 0 1 17 4c0 13-17 24-17 24z"/></svg>
+                    <div><strong>Enregistrez vos favoris</strong><span>Retrouvez rapidement les articles que vous aimez.</span></div>
+                </li>
+                <li>
+                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="m24 4 6 13 14 2-10 10 3 14-13-7-13 7 3-14L4 19l14-2z"/></svg>
+                    <div><strong>Cumulez des points fidélité</strong><span>Profitez de récompenses et d’offres exclusives.</span></div>
+                </li>
+                <li>
+                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M40 17a17 17 0 0 0-28-6L7 16m1-9-1 9 9-1M8 31a17 17 0 0 0 28 6l5-5m-1 9 1-9-9 1"/></svg>
+                    <div><strong>Gérez facilement vos retours</strong><span>Toutes vos demandes au même endroit.</span></div>
+                </li>
+            </ul>
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
-    </form>
+            <a class="button button-outline register-cta" href="{{ path('app_register') }}">
+                Créer mon compte
+                <span aria-hidden="true">→</span>
+            </a>
+            <p class="register-note">Cela ne prend que quelques instants.</p>
+        </section>
+    </div>
+
+    <section class="login-help" id="aide-connexion">
+        <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M8 28v-5a16 16 0 0 1 32 0v5M8 28H4v10h8V28zm32 0h4v10h-8V28zm0 10c0 4-3 6-8 6h-4"/></svg>
+        <div>
+            <h2>Besoin d’aide pour vous connecter&nbsp;?</h2>
+            <p>Notre service client est à votre écoute.</p>
+        </div>
+        <a class="button button-outline" href="mailto:contact@all4sport.local">Nous contacter</a>
+    </section>
 {% endblock %}

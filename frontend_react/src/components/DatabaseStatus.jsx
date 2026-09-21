@@ -62,7 +62,7 @@ export default function DatabaseStatus() {
   return (
     <main className="database-page">
       <header className="page-header">
-        <a className="brand" href="/react" aria-label="Accueil All4Sport">
+        <a className="brand" href="/" aria-label="Accueil All4Sport">
           <span className="brand-icon" aria-hidden="true">A4</span>
           All4Sport
         </a>
