@@ -41,7 +41,7 @@ class Commande
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     private ?Lieu $lieuRetrait = null;
@@ -162,14 +162,14 @@ class Commande
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getUser(): ?User
     {
-        return $this->client;
+        return $this->user;
     }
 
-    public function setClient(?Client $client): static
+    public function setUser(?User $user): static
     {
-        $this->client = $client;
+        $this->user = $user;
 
         return $this;
     }

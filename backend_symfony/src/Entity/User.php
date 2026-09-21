@@ -2,16 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class Client implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -48,7 +49,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Commande>
      */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'client')]
+    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user')]
     private Collection $commandes;
 
     public function __construct()
@@ -191,7 +192,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->commandes->contains($commande)) {
             $this->commandes->add($commande);
-            $commande->setClient($this);
+            $commande->setUser($this);
         }
 
         return $this;
@@ -199,11 +200,8 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeCommande(Commande $commande): static
     {
-        if ($this->commandes->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
-            if ($commande->getClient() === $this) {
-                $commande->setClient(null);
-            }
+        if ($this->commandes->removeElement($commande) && $commande->getUser() === $this) {
+            $commande->setUser(null);
         }
 
         return $this;
