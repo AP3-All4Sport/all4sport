@@ -50,7 +50,7 @@ export default function Header() {
       </div>
 
       <nav className="header-nav site-container" aria-label="Navigation principale">
-        {['Tous les sports', 'Homme', 'Femme'].map((label) => (
+        {['Tous les sports', 'Homme', 'Femme', 'Enfant'].map((label) => (
           <button key={label} type="button" disabled title={`${label} — page à venir`}>
             {label}
           </button>
