@@ -46,17 +46,22 @@ const navigationItems = [
 ]
 
 function getCategoryUrl(universe, category) {
-  const parameters = new URLSearchParams({ univers: universe })
+  if (universe === 'sports' && !category) return '/sports'
 
-  if (category) {
-    parameters.set('categorie', category)
+  const parameters = new URLSearchParams()
+
+  if (universe !== 'sports') {
+    parameters.set('univers', universe)
   }
 
-  return `/?${parameters.toString()}`
+  if (category) {
+    parameters.set('q', category)
+  }
+
+  return '/catalogue?' + parameters.toString()
 }
 
 export default function Header() {
-  const [searchNotice, setSearchNotice] = useState('')
   const [openMenuId, setOpenMenuId] = useState(null)
   const navigationRef = useRef(null)
   const activeTriggerRef = useRef(null)
@@ -94,7 +99,8 @@ export default function Header() {
 
   function handleSearch(event) {
     event.preventDefault()
-    setSearchNotice('La recherche de produits sera bientôt disponible.')
+    const query = new FormData(event.currentTarget).get('q')?.toString().trim()
+    if (query) window.location.assign('/catalogue?q=' + encodeURIComponent(query))
   }
 
   return (
@@ -115,13 +121,8 @@ export default function Header() {
               aria-label="Rechercher un produit, une marque, un sport"
               placeholder="Rechercher un produit, une marque, un sport..."
               required
-              onChange={() => setSearchNotice('')}
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') setSearchNotice('')
-              }}
             />
           </form>
-          <p className="search-notice" role="status">{searchNotice}</p>
         </div>
 
         <div className="header-actions">

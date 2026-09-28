@@ -28,6 +28,25 @@ class Produit
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prixVente = null;
 
+    #[ORM\Column(length: 100, options: ['default' => 'All4Sport'])]
+    private ?string $marque = null;
+
+    #[ORM\Column(length: 20, options: ['default' => 'homme'])]
+    private ?string $univers = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $prixBarre = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $note = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $nombreAvis = 0;
+
+    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sport $sport = null;
+
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Rayon $rayon = null;
@@ -106,6 +125,78 @@ class Produit
     public function setPrixVente(string $prixVente): static
     {
         $this->prixVente = $prixVente;
+
+        return $this;
+    }
+
+    public function getMarque(): ?string
+    {
+        return $this->marque;
+    }
+
+    public function setMarque(string $marque): static
+    {
+        $this->marque = $marque;
+
+        return $this;
+    }
+
+    public function getUnivers(): ?string
+    {
+        return $this->univers;
+    }
+
+    public function setUnivers(string $univers): static
+    {
+        $this->univers = $univers;
+
+        return $this;
+    }
+
+    public function getPrixBarre(): ?string
+    {
+        return $this->prixBarre;
+    }
+
+    public function setPrixBarre(?string $prixBarre): static
+    {
+        $this->prixBarre = $prixBarre;
+
+        return $this;
+    }
+
+    public function getNote(): int
+    {
+        return $this->note;
+    }
+
+    public function setNote(int $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    public function getNombreAvis(): int
+    {
+        return $this->nombreAvis;
+    }
+
+    public function setNombreAvis(int $nombreAvis): static
+    {
+        $this->nombreAvis = $nombreAvis;
+
+        return $this;
+    }
+
+    public function getSport(): ?Sport
+    {
+        return $this->sport;
+    }
+
+    public function setSport(?Sport $sport): static
+    {
+        $this->sport = $sport;
 
         return $this;
     }
@@ -194,7 +285,7 @@ class Produit
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
-            $image->setProduits($this);
+            $image->setProduit($this);
         }
 
         return $this;
@@ -204,8 +295,8 @@ class Produit
     {
         if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
-            if ($image->getProduits() === $this) {
-                $image->setProduits(null);
+            if ($image->getProduit() === $this) {
+                $image->setProduit(null);
             }
         }
 

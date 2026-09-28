@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class FrontController extends AbstractController
 {
     #[Route('/', name: 'app_react')]
+    #[Route('/catalogue', name: 'app_catalog')]
+    #[Route('/sports', name: 'app_sports')]
     public function index(): Response
     {
         return $this->render('front/index.html.twig');
