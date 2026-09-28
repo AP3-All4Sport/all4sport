@@ -2,32 +2,30 @@
 
 namespace App\Entity;
 
-use App\Repository\RayonRepository;
+use App\Repository\TailleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: RayonRepository::class)]
-class Rayon
+#[ORM\Entity(repositoryClass: TailleRepository::class)]
+class Taille
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: 20, unique: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $libelle = null;
 
     #[ORM\Column]
     private int $position = 0;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'rayon')]
+    /** @var Collection<int, Produit> */
+    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'tailles')]
     private Collection $produits;
 
     public function __construct()
@@ -76,33 +74,9 @@ class Rayon
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
+    /** @return Collection<int, Produit> */
     public function getProduits(): Collection
     {
         return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setRayon($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getRayon() === $this) {
-                $produit->setRayon(null);
-            }
-        }
-
-        return $this;
     }
 }

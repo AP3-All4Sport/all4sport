@@ -131,36 +131,13 @@
 .home-brand:hover,
 .home-brand[aria-pressed='true'] { border-color: #ff5708; background: #fff5ee; }
 .home-brand > span:last-child { font-size: 12px; }
-.home-brand-wordmark { display: grid; place-items: center; min-height: 38px; max-width: 100%; text-align: center; font-size: clamp(15px, 2vw, 28px); line-height: 1; font-weight: 900; letter-spacing: -.07em; }
-.home-brand-wordmark--nike,
-.home-brand-wordmark--asics { font-style: italic; font-size: 31px; }
-.home-brand-wordmark--puma,
-.home-brand-wordmark--mckinley { text-transform: uppercase; }
-.home-brand-wordmark--the-north-face,
-.home-brand-wordmark--under-armour { max-width: 78px; font-size: 17px; text-transform: uppercase; letter-spacing: -.04em; }
-.home-brand-wordmark--nakamura { font-size: 19px; }
+.home-brand-logo { display: block; width: min(90px, 85%); height: 42px; object-fit: contain; }
 
 .home-products { margin-top: 48px; scroll-margin-top: 25px; }
 .home-products .home-section-heading { margin-bottom: 30px; }
 .home-products h2::after { content: ''; display: block; width: 42px; height: 4px; margin-top: 14px; background: #ff5708; }
-.home-product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
-.home-product { position: relative; min-width: 0; border: 1px solid #f0f0f0; border-radius: 9px; overflow: hidden; background: #fafafa; }
-.home-product-open { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; text-align: left; cursor: pointer; }
-.home-product-photo { display: block; width: 100%; height: auto; aspect-ratio: 1.13; object-fit: cover; }
-.home-product-info { display: grid; gap: 10px; padding: 18px 14px 16px; }
-.home-product-name { min-height: 44px; font-size: 14px; line-height: 1.5; }
-.home-product-type { font-size: 12px; color: #62666b; }
-.home-product-prices { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
-.home-page .home-price,
-.home-dialog .home-price { color: #eb4c00; font-size: 21px; font-weight: 700; }
-.home-product-prices del { color: #666b72; font-size: 13px; }
-.home-discount { padding: 5px 9px; border-radius: 20px; background: #ffebe4; color: #d64200; font-size: 13px; font-weight: 700; }
-.home-page .home-favorite { position: absolute; z-index: 1; top: 12px; right: 12px; display: grid; place-items: center; width: 36px; height: 36px; padding: 7px; border: 0; border-radius: 50%; background: white; cursor: pointer; }
-.home-favorite .icon { width: 22px; height: 22px; }
-.home-favorite[aria-pressed='true'] { background: #ffc7af; box-shadow: 0 0 0 2px #ff5708; }
 .home-filter { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin: -12px 0 20px; }
 .home-filter button { padding: 7px 12px; border: 1px solid #ddd; border-radius: 20px; background: white; cursor: pointer; }
-.home-catalog-note { margin: 16px 0 0; color: #71757b; font-size: 11px; }
 .home-empty { padding: 26px; border-radius: 8px; background: #f5f5f6; line-height: 1.6; }
 
 .home-relay { position: relative; overflow: hidden; padding: 38px 0 30px; background: linear-gradient(110deg, #ededee 45%, #edf0efcc), repeating-linear-gradient(35deg, #e3e5e4 0 25px, white 25px 31px, #e6e8e7 31px 80px); }
@@ -195,12 +172,6 @@
   .home-category-copy { inset: auto 20px 20px; }
   .home-category-copy > span:not(.home-category-cta) { font-size: 13px; }
   .home-brand-grid { gap: 9px; }
-  .home-brand-wordmark { font-size: 20px; }
-  .home-brand-wordmark--the-north-face,
-  .home-brand-wordmark--under-armour,
-  .home-brand-wordmark--nakamura { font-size: 14px; }
-  .home-product-grid { gap: 16px; }
-  .home-product-prices { gap: 8px; }
   .home-relay-form { gap: 16px; padding: 20px; }
   .home-relay-form .home-button { padding-inline: 17px; }
 }
@@ -227,7 +198,6 @@
   .home-section-heading { align-items: start; }
   .home-page .home-text-link { font-size: 12px; }
   .home-section-heading > .home-text-link { text-align: right; }
-  .home-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-relay-form { grid-template-columns: 1fr 1fr; gap: 15px; }
   .home-relay-form > label:nth-child(3) { grid-column: 1 / -1; }
   .home-relay-heading { gap: 16px; }
@@ -245,19 +215,6 @@
   .home-category-cta { padding: 11px 24px; font-size: 13px; }
   .home-brand-grid { gap: 8px; }
   .home-brand > span:last-child { font-size: 10px; }
-  .home-brand-wordmark { font-size: 19px; }
-  .home-brand-wordmark--the-north-face,
-  .home-brand-wordmark--under-armour,
-  .home-brand-wordmark--nakamura { font-size: 12px; }
-  .home-product-grid { gap: 10px; }
-  .home-product-info { padding: 12px 10px; }
-  .home-product-name { min-height: 72px; font-size: 12px; }
-  .home-product-type { font-size: 10px; }
-  .home-page .home-price { font-size: 18px; }
-  .home-product-prices { gap: 7px; }
-  .home-product-prices del,
-  .home-discount { font-size: 11px; }
-  .home-favorite { top: 8px; right: 8px; }
   .home-relay-form { grid-template-columns: 1fr; }
 }
 

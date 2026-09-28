@@ -15,6 +15,11 @@ Sources récupérées le 15 septembre 2026 :
 - Logo All4Sport : vectorisation locale du PNG préexistant `brand/all4sport-logo.png`.
   Le SVG utilise uniquement des tracés et des dégradés, sans image matricielle intégrée.
   Les couleurs ont été simplifiées en noir, argent et orange ; le PNG original est conservé.
+- Logos des marques de la page d'accueil : Nike, adidas, PUMA, The North Face et
+  Under Armour proviennent de Simple Icons ; le logo ASICS vient de la page
+  corporate officielle « Brand & Trademark ». Les logos Nakamura et McKinley
+  viennent des photothèques officielles Intersport France et Intersport Allemagne.
+  Ils sont stockés dans `brands/` pour éviter toute requête externe au chargement.
 
 Les destinations des futures pages, du panier, du site corporate et des réseaux sociaux
 ne sont pas encore définies. Elles sont donc affichées comme indisponibles, sans faux lien.

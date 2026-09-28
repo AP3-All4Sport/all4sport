@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-labelledby="title">
+  <title id="title">Maillot de bain de natation</title>
+  <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f7fafc"/><stop offset="1" stop-color="#dfeaf0"/></linearGradient><linearGradient id="suit" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#12365a"/><stop offset="1" stop-color="#061a30"/></linearGradient></defs>
+  <rect width="480" height="480" fill="url(#bg)"/>
+  <ellipse cx="240" cy="402" rx="104" ry="20" fill="#0b1d2e" opacity=".13"/>
+  <path d="M160 73h44c0 42 12 62 36 62s36-20 36-62h44c0 59 22 91 43 124 31 48 24 100-7 150l-45 72-71-57-71 57-45-72c-31-50-38-102-7-150 21-33 43-65 43-124z" fill="url(#suit)"/>
+  <path d="M146 156c28 20 59 30 94 30s66-10 94-30" fill="none" stroke="#20b7cf" stroke-width="18"/>
+  <path d="M195 230c29 13 59 13 90 0" fill="none" stroke="#ff5b00" stroke-linecap="round" stroke-width="14"/>
+</svg>

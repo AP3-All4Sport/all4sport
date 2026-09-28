@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
+use App\Repository\RayonRepository;
 use App\Repository\SportRepository;
+use App\Repository\TailleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,14 +20,83 @@ class CatalogController extends AbstractController
     {
         $universe = $this->cleanParameter($request->query->get('univers'));
         $sport = $this->cleanParameter($request->query->get('sport'));
+        $category = $this->cleanParameter($request->query->get('categorie'));
+        $size = $this->cleanParameter($request->query->get('taille'));
+        $color = $this->cleanParameter($request->query->get('couleur'));
+        $brand = $this->cleanParameter($request->query->get('marque'));
+        $minimumPrice = $this->cleanPrice($request->query->get('prix_min'));
+        $maximumPrice = $this->cleanPrice($request->query->get('prix_max'));
         $query = $this->cleanParameter($request->query->get('q'));
 
         if (null !== $universe && !in_array($universe, ['homme', 'femme', 'enfant'], true)) {
             return $this->json(['message' => 'Univers inconnu.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if (false === $minimumPrice || false === $maximumPrice || (is_float($minimumPrice) && is_float($maximumPrice) && $minimumPrice > $maximumPrice)) {
+            return $this->json(['message' => 'Fourchette de prix invalide.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         return $this->json([
-            'products' => array_map($this->normalizeProduct(...), $products->findForCatalog($universe, $sport, $query)),
+            'products' => array_map($this->normalizeProduct(...), $products->findForCatalog($universe, $sport, $category, $size, $color, $brand, $minimumPrice, $maximumPrice, $query)),
+        ]);
+    }
+
+    #[Route('/filtres', name: 'api_catalog_filters', methods: ['GET'])]
+    public function filters(
+        Request $request,
+        RayonRepository $categories,
+        TailleRepository $sizes,
+        ProduitRepository $products,
+    ): JsonResponse {
+        $universe = $this->cleanParameter($request->query->get('univers'));
+        $sport = $this->cleanParameter($request->query->get('sport'));
+        $category = $this->cleanParameter($request->query->get('categorie'));
+
+        if (null !== $universe && !in_array($universe, ['homme', 'femme', 'enfant'], true)) {
+            return $this->json(['message' => 'Univers inconnu.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json([
+            'categories' => array_map(
+                static fn (array $item): array => [
+                    'code' => $item['code'],
+                    'name' => $item['name'],
+                    'productCount' => (int) $item['productCount'],
+                ],
+                $categories->findForCatalog($universe),
+            ),
+            'sizes' => array_map(
+                static fn (array $item): array => [
+                    'code' => $item['code'],
+                    'name' => $item['name'],
+                    'productCount' => (int) $item['productCount'],
+                ],
+                $sizes->findForCatalog($universe, $sport, $category),
+            ),
+            'colors' => array_map($this->normalizeFilterValue(...), $products->findAvailableColors($universe, $sport, $category)),
+            'brands' => array_map($this->normalizeFilterValue(...), $products->findAvailableBrands($universe, $sport, $category)),
+            'priceRange' => $products->findPriceRange($universe, $sport, $category),
+        ]);
+    }
+
+    #[Route('/categories', name: 'api_catalog_categories', methods: ['GET'])]
+    public function categories(Request $request, RayonRepository $categories): JsonResponse
+    {
+        $universe = $this->cleanParameter($request->query->get('univers'));
+
+        if (null !== $universe && !in_array($universe, ['homme', 'femme', 'enfant'], true)) {
+            return $this->json(['message' => 'Univers inconnu.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json([
+            'categories' => array_map(
+                static fn (array $category): array => [
+                    'code' => $category['code'],
+                    'name' => $category['name'],
+                    'productCount' => (int) $category['productCount'],
+                ],
+                $categories->findForCatalog($universe),
+            ),
         ]);
     }
 
@@ -48,6 +119,8 @@ class CatalogController extends AbstractController
     private function normalizeProduct(Produit $product): array
     {
         $image = $product->getImages()->first();
+        $sizes = $product->getTailles()->toArray();
+        usort($sizes, static fn ($left, $right): int => $left->getPosition() <=> $right->getPosition());
 
         return [
             'id' => $product->getId(),
@@ -56,7 +129,13 @@ class CatalogController extends AbstractController
             'description' => $product->getDescription(),
             'brand' => $product->getMarque(),
             'universe' => $product->getUnivers(),
+            'color' => $product->getCouleur(),
             'department' => $product->getRayon()?->getLibelle(),
+            'category' => [
+                'code' => $product->getRayon()?->getCode(),
+                'name' => $product->getRayon()?->getLibelle(),
+            ],
+            'sizes' => array_map(static fn ($size): string => $size->getLibelle(), $sizes),
             'sport' => [
                 'code' => $product->getSport()?->getCode(),
                 'name' => $product->getSport()?->getLibelle(),
@@ -76,5 +155,26 @@ class CatalogController extends AbstractController
         }
 
         return strtolower(trim($value));
+    }
+
+    private function cleanPrice(mixed $value): float|false|null
+    {
+        if (!is_string($value) || '' === trim($value)) {
+            return null;
+        }
+
+        $price = filter_var(str_replace(',', '.', trim($value)), FILTER_VALIDATE_FLOAT);
+
+        return false === $price || $price < 0 ? false : (float) $price;
+    }
+
+    /** @param array{code: string, name: string, productCount: int|string} $item */
+    private function normalizeFilterValue(array $item): array
+    {
+        return [
+            'code' => $item['code'],
+            'name' => $item['name'],
+            'productCount' => (int) $item['productCount'],
+        ];
     }
 }

@@ -11,7 +11,7 @@ const services = [
 const columns = [
   {
     title: 'Faites votre shopping avec All4Sport',
-    links: ['Livraison', 'Guide des tailles', 'Trouver un magasin', 'Programme de Fidélité', 'Réduction Étudiants', 'All4Sport Blog'],
+    links: ['Livraison', 'Guide des tailles', 'Trouver un magasin', 'Programme de Fidélité', 'Conseils sportifs', 'All4Sport Blog'],
   },
   {
     title: 'Service Clients',

@@ -34,6 +34,9 @@ class Produit
     #[ORM\Column(length: 20, options: ['default' => 'homme'])]
     private ?string $univers = null;
 
+    #[ORM\Column(length: 30, options: ['default' => 'Multicolore'])]
+    private string $couleur = 'Multicolore';
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $prixBarre = null;
 
@@ -50,6 +53,11 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Rayon $rayon = null;
+
+    /** @var Collection<int, Taille> */
+    #[ORM\ManyToMany(targetEntity: Taille::class, inversedBy: 'produits')]
+    #[ORM\JoinTable(name: 'produit_taille')]
+    private Collection $tailles;
 
     /**
      * @var Collection<int, LigneCommande>
@@ -74,6 +82,7 @@ class Produit
         $this->ligneCommandes = new ArrayCollection();
         $this->stocks = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->tailles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,6 +162,18 @@ class Produit
         return $this;
     }
 
+    public function getCouleur(): string
+    {
+        return $this->couleur;
+    }
+
+    public function setCouleur(string $couleur): static
+    {
+        $this->couleur = $couleur;
+
+        return $this;
+    }
+
     public function getPrixBarre(): ?string
     {
         return $this->prixBarre;
@@ -209,6 +230,28 @@ class Produit
     public function setRayon(?Rayon $rayon): static
     {
         $this->rayon = $rayon;
+
+        return $this;
+    }
+
+    /** @return Collection<int, Taille> */
+    public function getTailles(): Collection
+    {
+        return $this->tailles;
+    }
+
+    public function addTaille(Taille $taille): static
+    {
+        if (!$this->tailles->contains($taille)) {
+            $this->tailles->add($taille);
+        }
+
+        return $this;
+    }
+
+    public function removeTaille(Taille $taille): static
+    {
+        $this->tailles->removeElement($taille);
 
         return $this;
     }

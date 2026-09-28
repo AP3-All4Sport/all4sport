@@ -10,6 +10,7 @@
 /frontend_react/dist/
 
 # Configuration locale et secrets
+/backend_symfony/.env
 /backend_symfony/.env.local
 /backend_symfony/.env.local.php
 /backend_symfony/.env.*.local

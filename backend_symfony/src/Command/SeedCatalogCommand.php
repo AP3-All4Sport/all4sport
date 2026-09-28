@@ -6,9 +6,11 @@ use App\Entity\Image;
 use App\Entity\Produit;
 use App\Entity\Rayon;
 use App\Entity\Sport;
+use App\Entity\Taille;
 use App\Repository\ProduitRepository;
 use App\Repository\RayonRepository;
 use App\Repository\SportRepository;
+use App\Repository\TailleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -27,6 +29,7 @@ class SeedCatalogCommand extends Command
         private readonly ProduitRepository $products,
         private readonly RayonRepository $departments,
         private readonly SportRepository $sports,
+        private readonly TailleRepository $sizes,
     ) {
         parent::__construct();
     }
@@ -36,6 +39,7 @@ class SeedCatalogCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $sports = $this->seedSports();
         $departments = $this->seedDepartments();
+        $sizes = $this->seedSizes();
         $created = 0;
 
         foreach ($this->productData() as $data) {
@@ -51,13 +55,13 @@ class SeedCatalogCommand extends Command
                 ->setDesignation($data['name'])
                 ->setDescription($data['description'])
                 ->setPrixVente($data['price'])
-                ->setPrixBarre($data['previousPrice'])
+                ->setPrixBarre(null)
                 ->setMarque($data['brand'])
                 ->setUnivers($data['universe'])
                 ->setNote($data['rating'])
                 ->setNombreAvis($data['reviews'])
-                ->setRayon($departments[$data['department']])
-                ->setSport($sports[$data['sport']]);
+                ->setSport($sports[$data['sport']])
+                ->setRayon($departments[$this->categoryCodeFor($product)]);
 
             $image = $product->getImages()->first();
             if (false === $image) {
@@ -65,6 +69,28 @@ class SeedCatalogCommand extends Command
                 $this->entityManager->persist($image);
             }
             $image->setLibelle('/uploads/catalogue/'.$data['image']);
+        }
+
+        $this->entityManager->flush();
+
+        foreach ($this->products->findAll() as $product) {
+            $categoryCode = $this->categoryCodeFor($product);
+            $product
+                ->setRayon($departments[$categoryCode])
+                ->setCouleur($this->colorFor($product));
+
+            foreach ($product->getTailles()->toArray() as $size) {
+                $product->removeTaille($size);
+            }
+            foreach ($this->sizeCodesFor($product, $categoryCode) as $sizeCode) {
+                $product->addTaille($sizes[$sizeCode]);
+            }
+
+            $image = $product->getImages()->first();
+            if (false !== $image && !str_starts_with($image->getLibelle(), '/uploads/')) {
+                $image->setLibelle('/uploads/catalogue/'.$this->fallbackImageFor($product, $categoryCode));
+            }
+            $product->setPrixBarre(null);
         }
 
         $this->entityManager->flush();
@@ -102,18 +128,133 @@ class SeedCatalogCommand extends Command
     private function seedDepartments(): array
     {
         $result = [];
-        foreach ([
+        $categories = [
             'chaussures' => 'Chaussures',
-            'vetements' => 'Vêtements',
+            'chaussettes' => 'Chaussettes',
+            't-shirts' => 'T-shirts et maillots',
+            'pulls' => 'Pulls et sweats',
+            'vestes' => 'Vestes',
+            'shorts' => 'Shorts',
+            'pantalons-leggings' => 'Pantalons et leggings',
+            'brassieres' => 'Brassières',
+            'maillots-de-bain' => 'Maillots de bain',
+            'casquettes' => 'Casquettes',
+            'casques' => 'Casques',
             'accessoires' => 'Accessoires',
-        ] as $code => $label) {
+        ];
+
+        $position = 10;
+        foreach ($categories as $code => $label) {
             $department = $this->departments->findOneBy(['code' => $code]) ?? new Rayon();
-            $department->setCode($code)->setLibelle($label);
+            $department->setCode($code)->setLibelle($label)->setPosition($position);
             $this->entityManager->persist($department);
             $result[$code] = $department;
+            $position += 10;
         }
 
         return $result;
+    }
+
+    /** @return array<string, Taille> */
+    private function seedSizes(): array
+    {
+        $result = [];
+        $labels = [
+            'tu' => 'Taille unique',
+            'xs' => 'XS', 's' => 'S', 'm' => 'M', 'l' => 'L', 'xl' => 'XL', 'xxl' => 'XXL',
+            '6-ans' => '6 ans', '8-ans' => '8 ans', '10-ans' => '10 ans', '12-ans' => '12 ans', '14-ans' => '14 ans',
+            '28' => '28', '30' => '30', '32' => '32', '34' => '34', '36' => '36', '37' => '37', '38' => '38',
+            '39' => '39', '40' => '40', '41' => '41', '42' => '42', '43' => '43', '44' => '44', '45' => '45', '46' => '46',
+            '35-38' => '35–38', '39-42' => '39–42', '43-46' => '43–46',
+        ];
+
+        $position = 10;
+        foreach ($labels as $code => $label) {
+            $size = $this->sizes->findOneBy(['code' => $code]) ?? new Taille();
+            $size->setCode($code)->setLibelle($label)->setPosition($position);
+            $this->entityManager->persist($size);
+            $result[$code] = $size;
+            $position += 10;
+        }
+
+        return $result;
+    }
+
+    private function categoryCodeFor(Produit $product): string
+    {
+        $name = mb_strtolower((string) $product->getDesignation());
+
+        return match (true) {
+            str_contains($name, 'chaussette') => 'chaussettes',
+            str_contains($name, 'casquette') => 'casquettes',
+            str_contains($name, 'casque') => 'casques',
+            str_contains($name, 'brassière') => 'brassieres',
+            str_contains($name, 'chaussure') => 'chaussures',
+            str_contains($name, 'maillot de bain'), str_contains($name, 'maillot') && 'natation' === $product->getSport()?->getCode() => 'maillots-de-bain',
+            str_contains($name, 't-shirt'), str_contains($name, 'maillot') => 't-shirts',
+            str_contains($name, 'veste') => 'vestes',
+            str_contains($name, 'sweat'), str_contains($name, 'pull') => 'pulls',
+            str_contains($name, 'short') => 'shorts',
+            str_contains($name, 'legging'), str_contains($name, 'pantalon') => 'pantalons-leggings',
+            default => 'accessoires',
+        };
+    }
+
+    private function colorFor(Produit $product): string
+    {
+        $name = mb_strtolower((string) $product->getDesignation());
+
+        return match (true) {
+            str_contains($name, 'noir') => 'Noir',
+            str_contains($name, 'blanc') => 'Blanc',
+            str_contains($name, 'bleu') => 'Bleu',
+            str_contains($name, 'rouge') => 'Rouge',
+            str_contains($name, 'jaune') => 'Jaune',
+            str_contains($name, 'orange'), str_contains($name, 'corail') => 'Orange',
+            str_contains($name, 'vert'), str_contains($name, 'turquoise') => 'Vert',
+            str_contains($name, 'lavande') => 'Violet',
+            default => 'Gris',
+        };
+    }
+
+    private function fallbackImageFor(Produit $product, string $categoryCode): string
+    {
+        return match ($categoryCode) {
+            'chaussures' => 'femme-running.png',
+            't-shirts' => 'enfant-maillot.png',
+            'pulls' => 'femme-hoodie.png',
+            'vestes' => 'enfant-veste.png',
+            'shorts' => 'enfant-short.png',
+            'pantalons-leggings' => 'femme-legging.png',
+            'brassieres' => 'femme-brassiere.png',
+            'maillots-de-bain' => 'produit-maillot-bain.svg',
+            'chaussettes' => 'produit-chaussettes.svg',
+            'casquettes' => 'produit-casquette.svg',
+            'casques' => 'enfant-casque.png',
+            default => 'sport-'.$product->getSport()?->getCode().'.png',
+        };
+    }
+
+    /** @return list<string> */
+    private function sizeCodesFor(Produit $product, string $categoryCode): array
+    {
+        if ('chaussures' === $categoryCode) {
+            return 'enfant' === $product->getUnivers()
+                ? ['28', '30', '32', '34', '36']
+                : ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
+        }
+
+        if ('chaussettes' === $categoryCode) {
+            return ['35-38', '39-42', '43-46'];
+        }
+
+        if (in_array($categoryCode, ['accessoires', 'casquettes', 'casques'], true)) {
+            return ['tu'];
+        }
+
+        return 'enfant' === $product->getUnivers()
+            ? ['6-ans', '8-ans', '10-ans', '12-ans', '14-ans']
+            : ['xs', 's', 'm', 'l', 'xl', 'xxl'];
     }
 
     /** @return list<array<string, int|string|null>> */
@@ -122,6 +263,8 @@ class SeedCatalogCommand extends Command
         return [
             ['reference' => 'HOM-FOOT-001', 'name' => 'Chaussures de football adulte Noir/Rouge', 'description' => 'Crampons polyvalents pour terrain sec.', 'price' => '49.99', 'previousPrice' => '69.99', 'brand' => 'All4Sport', 'universe' => 'homme', 'rating' => 46, 'reviews' => 128, 'department' => 'chaussures', 'sport' => 'football', 'image' => 'homme-crampon-noir.jpg'],
             ['reference' => 'HOM-FOOT-002', 'name' => 'Chaussures de football adulte Jaune/Bleu', 'description' => 'Chaussures légères pensées pour accélérer.', 'price' => '59.99', 'previousPrice' => '89.99', 'brand' => 'All4Sport', 'universe' => 'homme', 'rating' => 47, 'reviews' => 84, 'department' => 'chaussures', 'sport' => 'football', 'image' => 'homme-crampon-jaune.jpg'],
+            ['reference' => 'HOM-RUN-CHAUS-001', 'name' => 'Chaussettes de running respirantes', 'description' => 'Renforts ciblés et matière respirante pour la course.', 'price' => '9.99', 'previousPrice' => null, 'brand' => 'Kiprun', 'universe' => 'homme', 'rating' => 45, 'reviews' => 34, 'department' => 'chaussettes', 'sport' => 'running', 'image' => 'produit-chaussettes.svg'],
+            ['reference' => 'HOM-RUN-CASQ-001', 'name' => 'Casquette de running légère', 'description' => 'Casquette réglable et respirante pour courir au soleil.', 'price' => '14.99', 'previousPrice' => null, 'brand' => 'Kiprun', 'universe' => 'homme', 'rating' => 46, 'reviews' => 28, 'department' => 'casquettes', 'sport' => 'running', 'image' => 'produit-casquette.svg'],
             ['reference' => 'FEM-RUN-001', 'name' => 'Chaussures de running femme Corail/Blanc', 'description' => 'Amorti souple pour les sorties quotidiennes.', 'price' => '69.99', 'previousPrice' => '89.99', 'brand' => 'Kiprun', 'universe' => 'femme', 'rating' => 48, 'reviews' => 216, 'department' => 'chaussures', 'sport' => 'running', 'image' => 'femme-running.png'],
             ['reference' => 'FEM-RUN-002', 'name' => 'Legging de running femme Noir', 'description' => 'Legging respirant taille haute avec maintien.', 'price' => '29.99', 'previousPrice' => null, 'brand' => 'Domyos', 'universe' => 'femme', 'rating' => 46, 'reviews' => 97, 'department' => 'vetements', 'sport' => 'running', 'image' => 'femme-legging.png'],
             ['reference' => 'FEM-HIK-001', 'name' => 'Sweat zippé de randonnée femme Lavande', 'description' => 'Couche intermédiaire douce et chaude.', 'price' => '44.99', 'previousPrice' => '54.99', 'brand' => 'Quechua', 'universe' => 'femme', 'rating' => 45, 'reviews' => 63, 'department' => 'vetements', 'sport' => 'randonnee', 'image' => 'femme-hoodie.png'],
@@ -134,6 +277,7 @@ class SeedCatalogCommand extends Command
             ['reference' => 'FEM-FIT-004', 'name' => 'Legging de fitness femme Sans coutures', 'description' => 'Coupe près du corps et liberté de mouvement.', 'price' => '27.99', 'previousPrice' => null, 'brand' => 'Domyos', 'universe' => 'femme', 'rating' => 46, 'reviews' => 134, 'department' => 'vetements', 'sport' => 'fitness', 'image' => 'femme-legging.png'],
             ['reference' => 'FEM-HIK-003', 'name' => 'Sweat de randonnée femme Doux', 'description' => 'Un sweat polyvalent à porter avant et après la marche.', 'price' => '49.99', 'previousPrice' => null, 'brand' => 'Quechua', 'universe' => 'femme', 'rating' => 47, 'reviews' => 58, 'department' => 'vetements', 'sport' => 'randonnee', 'image' => 'femme-hoodie.png'],
             ['reference' => 'FEM-FIT-005', 'name' => 'Brassière de sport femme Training', 'description' => 'Dos respirant et maintien intermédiaire.', 'price' => '19.99', 'previousPrice' => '24.99', 'brand' => 'Domyos', 'universe' => 'femme', 'rating' => 45, 'reviews' => 93, 'department' => 'vetements', 'sport' => 'fitness', 'image' => 'femme-brassiere.png'],
+            ['reference' => 'FEM-SWI-001', 'name' => 'Maillot de bain de natation femme', 'description' => 'Maillot une pièce résistant au chlore pour les entraînements réguliers.', 'price' => '24.99', 'previousPrice' => null, 'brand' => 'Nabaiji', 'universe' => 'femme', 'rating' => 46, 'reviews' => 67, 'department' => 'maillots-de-bain', 'sport' => 'natation', 'image' => 'produit-maillot-bain.svg'],
             ['reference' => 'ENF-BAS-001', 'name' => 'Chaussures de basketball enfant Bleu', 'description' => 'Maintien montant et semelle adhérente.', 'price' => '39.99', 'previousPrice' => '49.99', 'brand' => 'Tarmak', 'universe' => 'enfant', 'rating' => 48, 'reviews' => 72, 'department' => 'chaussures', 'sport' => 'basketball', 'image' => 'enfant-basket.png'],
             ['reference' => 'ENF-FOO-001', 'name' => 'Maillot de football enfant Orange/Marine', 'description' => 'Maillot léger pour jouer et s’entraîner.', 'price' => '14.99', 'previousPrice' => null, 'brand' => 'Kipsta', 'universe' => 'enfant', 'rating' => 45, 'reviews' => 54, 'department' => 'vetements', 'sport' => 'football', 'image' => 'enfant-maillot.png'],
             ['reference' => 'ENF-TEN-001', 'name' => 'Short de tennis enfant Noir/Vert', 'description' => 'Short extensible avec poches latérales.', 'price' => '16.99', 'previousPrice' => null, 'brand' => 'Artengo', 'universe' => 'enfant', 'rating' => 44, 'reviews' => 38, 'department' => 'vetements', 'sport' => 'tennis', 'image' => 'enfant-short.png'],

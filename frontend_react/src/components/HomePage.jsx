@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import Icon from './Icon.jsx'
+import ProductCard from './ProductCard.jsx'
 import ocean from '../assets/home/ocean.jpg'
 import homme from '../assets/home/homme.jpg'
 import femme from '../assets/home/femme.jpg'
 import enfant from '../assets/home/enfant.jpg'
 import blackBoot from '../assets/home/crampon-noir.jpg'
 import yellowBoot from '../assets/home/crampon-jaune.jpg'
+import nikeLogo from '../assets/brands/nike.svg'
+import adidasLogo from '../assets/brands/adidas.svg'
+import nakamuraLogo from '../assets/brands/nakamura.png'
+import pumaLogo from '../assets/brands/puma.svg'
+import asicsLogo from '../assets/brands/asics.jpg'
+import northFaceLogo from '../assets/brands/the-north-face.svg'
+import mckinleyLogo from '../assets/brands/mckinley.png'
+import underArmourLogo from '../assets/brands/under-armour.svg'
 import './HomePage.css'
 
 const categories = [
@@ -14,12 +22,21 @@ const categories = [
   { id: 'enfant', name: 'Enfant', description: 'Grandir avec le sport.', image: enfant },
 ]
 
-const brands = ['Nike', 'Adidas', 'Nakamura', 'Puma', 'Asics', 'The North Face', 'McKinley', 'Under Armour']
+const brands = [
+  { name: 'Nike', logo: nikeLogo },
+  { name: 'Adidas', logo: adidasLogo },
+  { name: 'Nakamura', logo: nakamuraLogo },
+  { name: 'Puma', logo: pumaLogo },
+  { name: 'Asics', logo: asicsLogo },
+  { name: 'The North Face', logo: northFaceLogo },
+  { name: 'McKinley', logo: mckinleyLogo },
+  { name: 'Under Armour', logo: underArmourLogo },
+]
 const products = [
-  { id: 'club-enfant', name: 'Chaussure Predator FG CLUB Enfant Noir', brand: 'Adidas', category: 'enfant', image: blackBoot, price: 29.99, previous: 54.99, discount: 45, description: 'Un modèle à crampons pour accompagner les jeunes joueurs sur le terrain.' },
-  { id: 'match-adulte', name: 'Chaussure FUTURE 9 Match FG/AG Adulte Jaune/Bleu', brand: 'Puma', category: 'homme', image: yellowBoot, price: 56.90, previous: 94.99, discount: 40, description: 'Une silhouette légère et une tige souple pour les entraînements de football.' },
-  { id: 'club-noir', name: 'Chaussure F50 FG Pack Club — Noir', brand: 'Adidas', category: 'femme', image: blackBoot, price: 39.99, previous: 54.99, discount: 27, description: 'Une chaussure de football au profil épuré pour jouer avec aisance.' },
-  { id: 'play-enfant', name: 'Chaussure FUTURE Play Enfant Jaune/Bleu', brand: 'Puma', category: 'enfant', image: yellowBoot, price: 39.99, previous: 49.99, discount: 20, description: 'Un modèle coloré pour les jeunes passionnés de football.' },
+  { id: 'club-enfant', name: 'Chaussure Predator FG CLUB Enfant Noir', brand: 'Adidas', category: 'enfant', type: 'Football · Enfant', image: blackBoot, price: 29.99, description: 'Un modèle à crampons pour accompagner les jeunes joueurs sur le terrain.' },
+  { id: 'match-adulte', name: 'Chaussure FUTURE 9 Match FG/AG Adulte Jaune/Bleu', brand: 'Puma', category: 'homme', type: 'Football · Adulte', image: yellowBoot, price: 56.90, description: 'Une silhouette légère et une tige souple pour les entraînements de football.' },
+  { id: 'club-noir', name: 'Chaussure F50 FG Pack Club — Noir', brand: 'Adidas', category: 'femme', type: 'Football · Adulte', image: blackBoot, price: 39.99, description: 'Une chaussure de football au profil épuré pour jouer avec aisance.' },
+  { id: 'play-enfant', name: 'Chaussure FUTURE Play Enfant Jaune/Bleu', brand: 'Puma', category: 'enfant', type: 'Football · Enfant', image: yellowBoot, price: 39.99, description: 'Un modèle coloré pour les jeunes passionnés de football.' },
 ]
 const slides = [
   { image: ocean, title: 'Le sport au service', second: 'd’un monde', accent: 'meilleur', subtitle: 'Ensemble pour la préservation des océans', label: 'Préserver les océans', action: 'campaign' },
@@ -58,12 +75,6 @@ export default function HomePage() {
     const params = new URLSearchParams(window.location.search)
     return { category: categories.some(({ id }) => id === params.get('univers')) ? params.get('univers') : '', brand: '' }
   })
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('all4sport:favorites') || '[]')
-      return Array.isArray(stored) ? stored.filter((id) => products.some((product) => product.id === id)) : []
-    } catch { return [] }
-  })
   const [notice, setNotice] = useState('')
   const [modal, setModal] = useState(null)
   const [relay, setRelay] = useState({ postalCode: '', city: '', country: 'France' })
@@ -77,18 +88,7 @@ export default function HomePage() {
   useEffect(() => () => { locationRequest.current += 1 }, [])
 
   function chooseCategory(category) {
-    setFilter({ category, brand: '' })
-    document.getElementById('home-products')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
-  }
-
-  function toggleFavorite(product) {
-    const selected = favorites.includes(product.id)
-    const next = selected ? favorites.filter((id) => id !== product.id) : [...favorites, product.id]
-    setFavorites(next)
-    try {
-      localStorage.setItem('all4sport:favorites', JSON.stringify(next))
-      setNotice(`${product.name} : ${selected ? 'retiré des' : 'ajouté aux'} favoris.`)
-    } catch { setNotice('Favoris mis à jour pour cette visite. Le stockage local est indisponible.') }
+    window.location.assign('/catalogue?univers=' + encodeURIComponent(category))
   }
 
   function openCampaign() {
@@ -153,16 +153,16 @@ export default function HomePage() {
 
       <div className="site-container home-shopping">
         <section className="home-categories" aria-label="Choisissez votre univers">
-          {categories.map((category) => <button type="button" className="home-category" key={category.id} onClick={() => chooseCategory(category.id)}>
+          {categories.map((category) => <a className="home-category" key={category.id} href={`/catalogue?univers=${category.id}`}>
             <img src={category.image} alt="" loading="lazy" width="600" height="800" />
             <span className="home-category-copy"><strong>{category.name}</strong><span>{category.description}</span><span className="home-category-cta">Voir <Arrow /></span></span>
-          </button>)}
+          </a>)}
         </section>
 
         <section className="home-brands" aria-labelledby="home-brands-title">
-          <div className="home-section-heading"><h2 id="home-brands-title">Nos marques</h2><button type="button" className="home-text-link" onClick={() => setModal({ title: 'Nos marques', description: 'Retrouvez les marques de la maquette All4Sport. La sélection de démonstration ci-dessous présente Adidas et Puma.', items: brands })}>Voir toutes les marques <Arrow /></button></div>
+          <div className="home-section-heading"><h2 id="home-brands-title">Nos marques</h2><button type="button" className="home-text-link" onClick={() => setModal({ title: 'Nos marques', description: 'Retrouvez les marques disponibles chez All4Sport.', items: brands.map(({ name }) => name) })}>Voir toutes les marques <Arrow /></button></div>
           <div className="home-brand-grid">
-            {brands.map((brand) => <button className="home-brand" key={brand} type="button" aria-pressed={filter.brand === brand} onClick={() => { setFilter({ category: '', brand: filter.brand === brand ? '' : brand }); document.getElementById('home-products')?.scrollIntoView({ block: 'start' }) }}><span className={`home-brand-wordmark home-brand-wordmark--${brand.toLowerCase().replaceAll(' ', '-')}`}>{brand}</span><span>{brand}</span></button>)}
+            {brands.map(({ name, logo }) => <button className="home-brand" key={name} type="button" aria-pressed={filter.brand === name} onClick={() => { setFilter({ category: '', brand: filter.brand === name ? '' : name }); document.getElementById('home-products')?.scrollIntoView({ block: 'start' }) }}><img className="home-brand-logo" src={logo} alt="" /><span>{name}</span></button>)}
           </div>
         </section>
 
@@ -170,16 +170,9 @@ export default function HomePage() {
           <div className="home-section-heading"><h2 id="home-products-title">Les meilleurs crampons de la rentrée !</h2><button className="home-text-link" type="button" onClick={() => { setFilter({ category: '', brand: '' }); setNotice('Les quatre articles de la sélection sont affichés.') }}>Voir tout <Arrow /></button></div>
           {(filter.category || filter.brand) && <div className="home-filter">Sélection : {filter.brand || categories.find(({ id }) => id === filter.category)?.name}<button type="button" onClick={() => setFilter({ category: '', brand: '' })}>Effacer le filtre ×</button></div>}
           <div className="home-product-grid">
-            {selection.map((product) => <article className="home-product" key={product.id}>
-              <button className="home-favorite" type="button" aria-label={`${favorites.includes(product.id) ? 'Retirer des' : 'Ajouter aux'} favoris : ${product.name}`} aria-pressed={favorites.includes(product.id)} onClick={() => toggleFavorite(product)}><Icon name="heart" /></button>
-              <button className="home-product-open" type="button" onClick={() => setModal({ title: product.name, description: product.description, image: product.image, eyebrow: product.brand, product })}>
-                <img className="home-product-photo" src={product.image} alt={product.name} width="480" height="480" loading="lazy" />
-                <span className="home-product-info"><span className="home-product-name">{product.name}</span><span className="home-product-type">Football · {product.category === 'enfant' ? 'Enfant' : 'Adulte'}</span><span className="home-product-prices"><strong className="home-price">{money(product.price)}</strong><del>{money(product.previous)}</del><span className="home-discount">−{product.discount}%</span></span></span>
-              </button>
-            </article>)}
+            {selection.map((product) => <ProductCard key={product.id} product={product} onOpen={(selectedProduct) => setModal({ title: selectedProduct.name, description: selectedProduct.description, image: selectedProduct.image, eyebrow: selectedProduct.brand, product: selectedProduct })} />)}
           </div>
           {selection.length === 0 && <p className="home-empty">Aucun article de démonstration pour cette marque. Choisissez « Voir tout » pour retrouver la sélection.</p>}
-          <p className="home-catalog-note">Sélection de démonstration · Visuels d’illustration, prix indicatifs.</p>
           <p className="home-sr-only" role="status">{notice}</p>
         </section>
       </div>

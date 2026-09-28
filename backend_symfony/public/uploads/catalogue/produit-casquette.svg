@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-labelledby="title">
+  <title id="title">Casquette de sport</title>
+  <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f8f8f8"/><stop offset="1" stop-color="#e5e8ec"/></linearGradient><linearGradient id="cap" x1="0" x2="1"><stop stop-color="#ff6a21"/><stop offset="1" stop-color="#d93d00"/></linearGradient></defs>
+  <rect width="480" height="480" fill="url(#bg)"/>
+  <ellipse cx="245" cy="360" rx="169" ry="25" fill="#111820" opacity=".13"/>
+  <path d="M104 305c0-105 59-180 145-180 85 0 144 75 144 180-91 35-198 35-289 0z" fill="url(#cap)"/>
+  <path d="M249 125v188" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="8"/>
+  <path d="M247 294c84 0 151 16 198 48-31 28-74 36-132 25l-140-27c-21-4-22-32-1-38 22-6 47-8 75-8z" fill="#20252d"/>
+  <path d="M184 211c42-22 86-22 130 0" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="13" opacity=".9"/>
+</svg>

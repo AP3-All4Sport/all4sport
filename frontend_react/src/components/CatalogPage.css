@@ -12,14 +12,10 @@
   font-size: 14px;
 }
 
-.catalog-breadcrumb a:hover {
-  color: #e64e00;
-}
+.catalog-breadcrumb a:hover { color: #e64e00; }
 
 .catalog-title,
-.sports-heading {
-  margin-top: 14px;
-}
+.sports-heading { margin-top: 14px; }
 
 .catalog-title h1,
 .sports-heading h1 {
@@ -55,12 +51,60 @@
 
 .catalog-filter-button {
   display: inline-flex;
+  min-height: 46px;
   align-items: center;
   gap: 9px;
   padding: 10px 18px;
-  border: 1px solid #d3d7de;
+  border: 1.5px solid #15191f;
   border-radius: 999px;
-  font-weight: 700;
+  background: #fff;
+  color: #15191f;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.catalog-filter-button:hover {
+  border-color: #ff5b00;
+  color: #cf4800;
+}
+
+.catalog-filter-icon {
+  display: grid;
+  width: 18px;
+  gap: 3px;
+}
+
+.catalog-filter-icon i {
+  position: relative;
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+}
+
+.catalog-filter-icon i::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.catalog-filter-icon i:nth-child(1)::after,
+.catalog-filter-icon i:nth-child(3)::after { left: 3px; }
+.catalog-filter-icon i:nth-child(2)::after { right: 3px; }
+
+.catalog-filter-count {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 50%;
+  background: #ff5b00;
+  color: #fff;
+  font-size: 11px;
 }
 
 .catalog-toolbar select {
@@ -71,32 +115,281 @@
   font-weight: 700;
 }
 
-.catalog-page .home-product-grid {
-  margin-top: 20px;
+.catalog-content-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  margin-top: 22px;
 }
 
-.catalog-page .home-product-open {
-  cursor: default;
+.catalog-content-layout--wide { grid-template-columns: minmax(0, 1fr); }
+
+.catalog-sidebar {
+  position: sticky;
+  top: 16px;
+  overflow: hidden;
+  border: 1px solid #e0e2e5;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgb(16 24 40 / 6%);
 }
 
-.catalog-page .home-price {
-  color: #eb4c00;
-  font-size: 21px;
+.catalog-side-section { border-bottom: 1px solid #dedfe2; }
+
+.catalog-side-section > button {
+  display: flex;
+  width: 100%;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 0 17px;
+  border: 0;
+  background: #fff;
+  color: #1d2025;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.catalog-side-section > button:hover,
+.catalog-side-section > button[aria-expanded='true'] {
+  background: #fafafa;
+  color: #d84c00;
+}
+
+.catalog-side-section > button b {
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.catalog-side-section-content {
+  max-height: 280px;
+  padding: 0 13px 16px;
+  overflow-y: auto;
+}
+
+.catalog-choice-list { display: grid; gap: 5px; }
+
+.catalog-choice-list button {
+  display: flex;
+  width: 100%;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #41464e;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.catalog-choice-list button:hover { background: #f5f6f7; }
+
+.catalog-choice-list button.is-selected {
+  border-color: #ff7130;
+  background: #fff5ef;
+  color: #c84300;
+  font-weight: 800;
+}
+
+.catalog-choice-list small {
+  display: grid;
+  min-width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eff0f2;
+  color: #666d76;
+  font-size: 10px;
+}
+
+.catalog-color-list button > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.catalog-color-dot {
+  width: 17px;
+  height: 17px;
+  border: 1px solid #cfd3d8;
+  border-radius: 50%;
+  background: #9ca3af;
+}
+
+.catalog-color-dot--noir { background: #17191d; }
+.catalog-color-dot--blanc { background: #fff; }
+.catalog-color-dot--bleu { background: #2366b1; }
+.catalog-color-dot--rouge { background: #c93631; }
+.catalog-color-dot--jaune { background: #f1c52e; }
+.catalog-color-dot--orange { background: #f0702e; }
+.catalog-color-dot--vert { background: #3b8e61; }
+.catalog-color-dot--violet { background: #8060a9; }
+.catalog-color-dot--gris { background: #8c9299; }
+
+.catalog-side-sizes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.catalog-side-sizes button {
+  min-height: 38px;
+  padding: 5px;
+  border: 1px solid #d7dbe0;
+  border-radius: 6px;
+  background: #fff;
+  color: #33383f;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.catalog-side-sizes button:hover,
+.catalog-side-sizes button.is-selected {
+  border-color: #ff5b00;
+  background: #fff4ee;
+  color: #cf4800;
+}
+
+.catalog-price-range {
+  margin: 0 0 12px;
+  color: #737982;
+  font-size: 11px;
+}
+
+.catalog-side-price {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.catalog-side-price label > span:first-child {
+  display: block;
+  margin-bottom: 6px;
+  color: #656b74;
+  font-size: 10px;
   font-weight: 700;
 }
 
+.catalog-side-price label > span:last-child {
+  display: flex;
+  height: 42px;
+  align-items: center;
+  border: 1px solid #d4d8dd;
+  border-radius: 6px;
+}
+
+.catalog-side-price label > span:last-child:focus-within { border-color: #ff5b00; }
+
+.catalog-side-price input {
+  width: 100%;
+  min-width: 0;
+  padding: 0 2px 0 9px;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.catalog-side-price b {
+  padding-right: 8px;
+  color: #737982;
+  font-size: 11px;
+}
+
+.catalog-side-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 14px;
+  background: #f7f8f9;
+}
+
+.catalog-side-actions button {
+  min-height: 42px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.catalog-side-actions button:first-child {
+  border: 1px solid #cfd3d8;
+  background: #fff;
+  color: #343940;
+}
+
+.catalog-side-actions button:last-child {
+  border: 1px solid #ff5b00;
+  background: #ff5b00;
+  color: #fff;
+}
+
+.catalog-side-actions button:last-child:hover { background: #e64e00; }
+
+.catalog-products { min-width: 0; }
+
+.catalog-products .home-product-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.catalog-content-layout--wide .home-product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.catalog-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.catalog-active-filters span {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #f1f2f4;
+  color: #3f454d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.catalog-active-filters button {
+  padding: 7px 8px;
+  border: 0;
+  background: transparent;
+  color: #d64b00;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.catalog-page .home-product-open { cursor: default; }
+.catalog-page .home-price { color: #eb4c00; font-size: 21px; font-weight: 700; }
+
 .catalog-message {
-  margin: 36px 0;
+  margin: 0 0 24px;
   padding: 28px;
   border-radius: 8px;
   background: #f4f5f6;
   text-align: center;
 }
 
-.catalog-message--error {
-  background: #fff0ec;
-  color: #9a2a00;
-}
+.catalog-message--error { background: #fff0ec; color: #9a2a00; }
 
 .catalog-sr-only {
   position: absolute;
@@ -109,9 +402,7 @@
   border: 0;
 }
 
-.sports-heading {
-  margin-bottom: 25px;
-}
+.sports-heading { margin-bottom: 25px; }
 
 .sports-search {
   display: flex;
@@ -123,101 +414,37 @@
   border-radius: 999px;
 }
 
-.sports-search input {
-  width: 100%;
-  min-width: 0;
-  padding: 16px 0;
-  border: 0;
-  outline: 0;
-  font-size: 16px;
-}
-
-.sports-page > h2 {
-  position: relative;
-  margin: 42px 0 28px;
-  font-size: 30px;
-}
-
-.sports-page > h2::after {
-  content: '';
-  position: absolute;
-  bottom: -13px;
-  left: 0;
-  width: 58px;
-  height: 5px;
-  border-radius: 3px;
-  background: #ff5b00;
-}
-
-.sports-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.sport-card {
-  position: relative;
-  min-height: 390px;
-  overflow: hidden;
-  border-radius: 7px;
-  background: #222;
-  color: #fff !important;
-}
-
+.sports-search input { width: 100%; min-width: 0; padding: 16px 0; border: 0; outline: 0; font-size: 16px; }
+.sports-page > h2 { position: relative; margin: 42px 0 28px; font-size: 30px; }
+.sports-page > h2::after { content: ''; position: absolute; bottom: -13px; left: 0; width: 58px; height: 5px; border-radius: 3px; background: #ff5b00; }
+.sports-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.sport-card { position: relative; min-height: 390px; overflow: hidden; border-radius: 7px; background: #222; color: #fff !important; }
 .sport-card img,
-.sport-card-shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.sport-card img {
-  object-fit: cover;
-  transition: transform 250ms ease;
-}
-
-.sport-card-shade {
-  background: linear-gradient(transparent 55%, #000c);
-}
-
-.sport-card strong {
-  position: absolute;
-  right: 64px;
-  bottom: 20px;
-  left: 18px;
-  font-size: 25px;
-}
-
-.sport-card-arrow {
-  position: absolute;
-  right: 15px;
-  bottom: 14px;
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border-radius: 50%;
-  background: #fff;
-  color: #ff5b00;
-  font-size: 24px;
-}
-
-.sport-card:hover img {
-  transform: scale(1.035);
-}
+.sport-card-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sport-card img { object-fit: cover; transition: transform 250ms ease; }
+.sport-card-shade { background: linear-gradient(transparent 55%, #000c); }
+.sport-card strong { position: absolute; right: 64px; bottom: 20px; left: 18px; font-size: 25px; }
+.sport-card-arrow { position: absolute; right: 15px; bottom: 14px; display: grid; width: 42px; height: 42px; place-items: center; border-radius: 50%; background: #fff; color: #ff5b00; font-size: 24px; }
+.sport-card:hover img { transform: scale(1.035); }
 
 @media (max-width: 1050px) {
   .sports-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .catalog-content-layout { grid-template-columns: 250px minmax(0, 1fr); gap: 18px; }
+  .catalog-products .home-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-content-layout--wide .home-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 700px) {
   .catalog-page,
   .sports-page { padding-top: 16px; }
   .sports-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .catalog-toolbar,
   .catalog-toolbar > div { align-items: flex-start; }
   .catalog-toolbar > div { flex-direction: column; gap: 5px; }
+  .catalog-content-layout { grid-template-columns: 1fr; }
+  .catalog-sidebar { position: static; }
+  .catalog-products .home-product-grid,
+  .catalog-content-layout--wide .home-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sport-card { min-height: 310px; }
 }
 
