@@ -11,19 +11,15 @@ const services = [
 const columns = [
   {
     title: 'Faites votre shopping avec All4Sport',
-    links: ['Livraison', 'Guide des tailles', 'Trouver un magasin', 'Programme de Fidélité', 'Conseils sportifs', 'All4Sport Blog'],
+    links: ['Trouver un magasin'],
   },
   {
     title: 'Service Clients',
-    links: ['Retours et échanges', 'Contact', 'FAQ', 'Suivre ma Commande'],
-  },
-  {
-    title: 'Entreprise',
-    links: ['Carrières', 'Programme Affiliation', 'All4Sport Fashion', 'Nos engagements'],
+    links: ['Contact', 'FAQ', 'Suivre ma Commande'],
   },
   {
     title: 'Légal',
-    links: ['Conditions Générales de Vente', 'Confidentialité et Cookies', 'Paramètres des Cookies', 'Politique d’avis en ligne', 'Accessibilité'],
+    links: ['Conditions Générales de Vente', 'Confidentialité et Cookies', 'Paramètres des Cookies', 'Politique d’avis en ligne'],
   },
 ]
 
