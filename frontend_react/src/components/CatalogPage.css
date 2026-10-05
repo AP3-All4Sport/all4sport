@@ -378,7 +378,7 @@
   cursor: pointer;
 }
 
-.catalog-page .home-product-open { cursor: default; }
+.catalog-page .home-product-open { cursor: pointer; }
 .catalog-page .home-price { color: #eb4c00; font-size: 21px; font-weight: 700; }
 
 .catalog-message {

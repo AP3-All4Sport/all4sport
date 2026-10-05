@@ -191,7 +191,7 @@ export default function CatalogPage() {
           {status === 'loading' && <p className="catalog-message">Chargement des produits…</p>}
           {status === 'error' && <p className="catalog-message catalog-message--error">Le catalogue n’a pas pu être chargé. Vérifiez que Symfony et la base de données sont démarrés.</p>}
           {status === 'ready' && products.length === 0 && <p className="catalog-message">Aucun produit ne correspond à cette sélection.</p>}
-          <div className="home-product-grid">{sortedProducts.map((product) => <ProductCard key={product.id} product={product} />)}</div>
+          <div className="home-product-grid">{sortedProducts.map((product) => <ProductCard key={product.id} product={product} onOpen={({ id }) => window.location.assign(`/produit/${id}`)} />)}</div>
         </section>
       </div>
     </div>

@@ -15,6 +15,12 @@ class CatalogControllerTest extends WebTestCase
 
         $client->request('GET', '/catalogue?univers=femme');
         self::assertResponseIsSuccessful();
+
+        $client->request('GET', '/produit/1');
+        self::assertResponseIsSuccessful();
+
+        $client->request('GET', '/panier');
+        self::assertResponseIsSuccessful();
     }
 
     public function testProductsCanBeFilteredByUniverse(): void
@@ -25,6 +31,31 @@ class CatalogControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/json');
         self::assertArrayHasKey('products', $this->responseData($client));
+    }
+
+    public function testProductDetailsExposeDescriptionBrandImagesAndSizes(): void
+    {
+        $client = static::createClient();
+        $client->jsonRequest('GET', '/api/catalogue/produits');
+        $products = $this->responseData($client)['products'];
+        self::assertNotEmpty($products);
+
+        $client->jsonRequest('GET', '/api/catalogue/produits/'.$products[0]['id']);
+        self::assertResponseIsSuccessful();
+
+        $product = $this->responseData($client)['product'];
+        self::assertNotEmpty($product['description']);
+        self::assertNotEmpty($product['brand']);
+        self::assertNotEmpty($product['images']);
+        self::assertNotEmpty($product['sizes']);
+    }
+
+    public function testUnknownProductDetailsReturnNotFound(): void
+    {
+        $client = static::createClient();
+        $client->jsonRequest('GET', '/api/catalogue/produits/999999');
+
+        self::assertResponseStatusCodeSame(404);
     }
 
     public function testSportsEndpointReturnsACollection(): void
