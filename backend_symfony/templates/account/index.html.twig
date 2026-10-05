@@ -3,31 +3,59 @@
 {% block title %}Mon compte | All4Sport{% endblock %}
 
 {% block body %}
-    <section class="account-card">
-        <p class="eyebrow">Espace personnel</p>
-        <h1>Bonjour {{ app.user.prenom }}</h1>
-        <p class="account-intro">Vous êtes connecté à votre compte All4Sport.</p>
+    <nav class="account-breadcrumb" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_react') }}">Accueil</a>
+        <span aria-hidden="true">›</span>
+        <span>Mon profil</span>
+    </nav>
 
-        <dl class="account-details">
-            <div>
-                <dt>Nom</dt>
-                <dd>{{ app.user.prenom }} {{ app.user.nom }}</dd>
+    <section class="profile-hero">
+        <div class="profile-avatar" aria-hidden="true">{{ app.user.prenom|first|upper }}{{ app.user.nom|first|upper }}</div>
+        <div>
+            <p class="eyebrow">Espace personnel</p>
+            <h1>Bonjour {{ app.user.prenom }}</h1>
+            <p>Retrouvez ici les informations liées à votre compte.</p>
+        </div>
+        <a class="button button-secondary profile-logout" href="{{ logout_path() }}">Se déconnecter</a>
+    </section>
+
+    <div class="profile-grid">
+        <section class="profile-card">
+            <div class="profile-card-heading">
+                <div>
+                    <p class="eyebrow">Identité</p>
+                    <h2>Mes informations</h2>
+                </div>
+                <span class="profile-status">Compte actif</span>
             </div>
-            <div>
-                <dt>Adresse e-mail</dt>
-                <dd>{{ app.user.email }}</dd>
-            </div>
-            {% if app.user.telephone %}
+            <dl class="account-details">
+                <div>
+                    <dt>Nom complet</dt>
+                    <dd>{{ app.user.prenom }} {{ app.user.nom }}</dd>
+                </div>
+                <div>
+                    <dt>Adresse e-mail</dt>
+                    <dd>{{ app.user.email }}</dd>
+                </div>
                 <div>
                     <dt>Téléphone</dt>
-                    <dd>{{ app.user.telephone }}</dd>
+                    <dd>{{ app.user.telephone ?: 'Non renseigné' }}</dd>
                 </div>
-            {% endif %}
-        </dl>
+                <div>
+                    <dt>Numéro client</dt>
+                    <dd>{{ app.user.code }}</dd>
+                </div>
+            </dl>
+        </section>
 
-        <div class="account-actions">
-            <a class="button button-primary" href="{{ path('app_change_password') }}">Modifier mon mot de passe</a>
-            <a class="button button-secondary" href="{{ logout_path() }}">Se déconnecter</a>
-        </div>
-    </section>
+        <aside class="profile-card profile-security-card">
+            <div class="profile-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.8 2.9 8.4 7 10 4.1-1.6 7-5.2 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <p class="eyebrow">Sécurité</p>
+            <h2>Mot de passe</h2>
+            <p>Modifiez régulièrement votre mot de passe pour garder le contrôle de votre compte.</p>
+            <a class="button button-primary button-wide" href="{{ path('app_change_password') }}">Modifier mon mot de passe</a>
+        </aside>
+    </div>
 {% endblock %}

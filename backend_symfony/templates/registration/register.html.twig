@@ -3,24 +3,59 @@
 {% block title %}Créer un compte | All4Sport{% endblock %}
 
 {% block body %}
-    <section class="account-card">
-        <p class="eyebrow">Bienvenue</p>
-        <h1>Créer un compte</h1>
-        <p class="account-intro">Renseignez vos informations pour accéder à votre espace All4Sport.</p>
+    <nav class="account-breadcrumb" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_react') }}">Accueil</a>
+        <span aria-hidden="true">›</span>
+        <span>Créer un compte</span>
+    </nav>
 
-        {{ form_start(registration_form, {attr: {class: 'account-form'}}) }}
-            <div class="form-grid">
-                {{ form_row(registration_form.prenom) }}
-                {{ form_row(registration_form.nom) }}
-            </div>
-            {{ form_row(registration_form.email) }}
-            {{ form_row(registration_form.telephone) }}
-            {{ form_row(registration_form.plainPassword.first) }}
-            {{ form_row(registration_form.plainPassword.second) }}
+    <div class="registration-layout">
+        <aside class="registration-intro">
+            <p class="eyebrow">Rejoignez All4Sport</p>
+            <h1>Votre espace sport, simplement.</h1>
+            <p>Créez votre compte pour retrouver vos commandes et suivre leur avancement depuis un seul endroit.</p>
+            <ul>
+                <li><span aria-hidden="true">✓</span> Suivi de vos commandes</li>
+                <li><span aria-hidden="true">✓</span> Informations centralisées</li>
+                <li><span aria-hidden="true">✓</span> Accès rapide et personnel</li>
+            </ul>
+        </aside>
 
-            <button class="button button-primary" type="submit">Créer mon compte</button>
-        {{ form_end(registration_form) }}
+        <section class="account-card registration-card">
+            <p class="eyebrow">Nouveau membre</p>
+            <h2>Créer un compte</h2>
+            <p class="account-intro">Renseignez vos informations pour commencer.</p>
 
-        <p class="account-switch">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
-    </section>
+            {{ form_start(registration_form, {attr: {class: 'account-form'}}) }}
+                <div class="form-grid">
+                    {{ form_row(registration_form.prenom) }}
+                    {{ form_row(registration_form.nom) }}
+                </div>
+                {{ form_row(registration_form.email) }}
+                {{ form_row(registration_form.telephone) }}
+                <div class="form-grid">
+                    <div class="form-field">
+                        {{ form_label(registration_form.plainPassword.first) }}
+                        <div class="password-input">
+                            {{ form_widget(registration_form.plainPassword.first, {id: 'registration-password'}) }}
+                            <button class="password-toggle" type="button" data-password-toggle="registration-password" aria-label="Afficher le mot de passe" aria-pressed="false"><span class="password-eye" aria-hidden="true"></span></button>
+                        </div>
+                        {{ form_errors(registration_form.plainPassword.first) }}
+                    </div>
+                    <div class="form-field">
+                        {{ form_label(registration_form.plainPassword.second) }}
+                        <div class="password-input">
+                            {{ form_widget(registration_form.plainPassword.second, {id: 'registration-password-confirmation'}) }}
+                            <button class="password-toggle" type="button" data-password-toggle="registration-password-confirmation" aria-label="Afficher le mot de passe" aria-pressed="false"><span class="password-eye" aria-hidden="true"></span></button>
+                        </div>
+                        {{ form_errors(registration_form.plainPassword.second) }}
+                    </div>
+                </div>
+
+                <button class="button button-primary button-wide" type="submit">Créer mon compte</button>
+            {{ form_end(registration_form) }}
+
+            <p class="account-switch">Déjà inscrit&nbsp;? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </section>
+    </div>
 {% endblock %}

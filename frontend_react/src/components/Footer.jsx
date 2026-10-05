@@ -23,6 +23,24 @@ const columns = [
   },
 ]
 
+const footerStyles = `
+  .footer-main.footer-main--balanced {
+    grid-template-columns: minmax(260px, 1.45fr) repeat(3, minmax(160px, 1fr));
+  }
+
+  @media (max-width: 980px) {
+    .footer-main.footer-main--balanced {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer-main.footer-main--balanced {
+      grid-template-columns: 1fr;
+    }
+  }
+`
+
 const socials = [
   { icon: 'instagram', label: 'Instagram' },
   { icon: 'facebook', label: 'Facebook' },
@@ -48,6 +66,7 @@ function backToTop() {
 export default function Footer() {
   return (
     <footer className="site-footer">
+      <style>{footerStyles}</style>
       <section className="service-strip" aria-label="Les services All4Sport">
         <ul className="service-list site-container">
           {services.map(({ icon, title, text }) => (
@@ -63,7 +82,7 @@ export default function Footer() {
       </section>
 
       <div className="footer-dark">
-        <div className="footer-main site-container">
+        <div className="footer-main footer-main--balanced site-container">
           <div className="footer-brand">
             <a href="/" aria-label="All4Sport — Accueil">
               <img className="footer-logo" src={logo} alt="All4Sport" width="210" height="50" />

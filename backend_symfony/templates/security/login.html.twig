@@ -37,41 +37,40 @@
                     <div class="input-with-icon">
                         <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
                         <input type="password" name="_password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                        <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Afficher le mot de passe" aria-pressed="false">
+                            <span class="password-eye" aria-hidden="true"></span>
+                        </button>
                     </div>
                 </div>
 
                 <div class="login-options">
-                    <label class="remember-choice">
-                        <input type="checkbox" name="_remember_me">
-                        <span>Se souvenir de moi</span>
-                    </label>
-                    <a href="#aide-connexion">Mot de passe oublié&nbsp;?</a>
+                    <a href="{{ path('app_forgot_password') }}">Mot de passe oublié&nbsp;?</a>
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <button class="button button-primary login-submit" type="submit">
-                    Se connecter
-                    <span aria-hidden="true">→</span>
+                <button class="login-submit" type="submit">
+                    <span>Se connecter</span>
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
                 </button>
             </form>
 
             <div class="social-separator"><span>ou</span></div>
             <div class="social-login" aria-label="Autres méthodes de connexion bientôt disponibles">
                 <button type="button" disabled title="Connexion Google bientôt disponible">
-                    <span class="google-mark" aria-hidden="true">G</span>
+                    <svg class="social-logo social-logo-google" aria-hidden="true" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.5-.2-2.2H12v4.3h5.4a4.6 4.6 0 0 1-2 3v2.8h3.3c1.9-1.8 2.9-4.4 2.9-7.9Z"/>
+                        <path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.8c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3v2.9A10 10 0 0 0 12 22Z"/>
+                        <path fill="#FBBC05" d="M6.4 13.7A6 6 0 0 1 6.1 12c0-.6.1-1.2.3-1.7V7.4H3A10 10 0 0 0 2 12c0 1.7.4 3.2 1 4.6l3.4-2.9Z"/>
+                        <path fill="#EA4335" d="M12 6.2c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.8 9.8 0 0 0 12 2a10 10 0 0 0-9 5.4l3.4 2.9A6 6 0 0 1 12 6.2Z"/>
+                    </svg>
                     Continuer avec Google
                 </button>
-                <button type="button" disabled title="Connexion Apple bientôt disponible">
-                    <span class="apple-mark" aria-hidden="true">●</span>
+                <button class="social-login-apple" type="button" disabled title="Connexion Apple bientôt disponible">
+                    <svg class="social-logo" aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M17.1 12.5c0-2.8 2.3-4.1 2.4-4.2a5.1 5.1 0 0 0-4-2.2c-1.7-.2-3.3 1-4.1 1-.9 0-2.2-1-3.6-1-1.8 0-3.6 1.1-4.5 2.8-1.9 3.3-.5 8.2 1.4 10.9.9 1.3 2 2.8 3.5 2.7 1.4-.1 1.9-.9 3.6-.9s2.2.9 3.7.8c1.5 0 2.5-1.3 3.4-2.7 1.1-1.5 1.5-3 1.5-3.1-.1 0-3.3-1.3-3.3-4.1ZM14.4 4.3A4.7 4.7 0 0 0 15.5.9a4.8 4.8 0 0 0-3.1 1.6 4.4 4.4 0 0 0-1.1 3.3 4 4 0 0 0 3.1-1.5Z"/></svg>
                     Continuer avec Apple
                 </button>
             </div>
-
-            <p class="security-note">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="10" width="12" height="10" rx="2"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg>
-                Vos informations sont protégées et sécurisées.
-            </p>
         </section>
 
         <section class="auth-panel auth-panel-register">
@@ -83,34 +82,12 @@
                     <svg aria-hidden="true" viewBox="0 0 48 48"><path d="m8 14 16-9 16 9v20l-16 9-16-9zM8 14l16 9 16-9M24 23v20"/></svg>
                     <div><strong>Suivez vos commandes</strong><span>Consultez leur statut à tout moment.</span></div>
                 </li>
-                <li>
-                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M24 41S7 30 7 17a9 9 0 0 1 17-4 9 9 0 0 1 17 4c0 13-17 24-17 24z"/></svg>
-                    <div><strong>Enregistrez vos favoris</strong><span>Retrouvez rapidement les articles que vous aimez.</span></div>
-                </li>
-                <li>
-                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="m24 4 6 13 14 2-10 10 3 14-13-7-13 7 3-14L4 19l14-2z"/></svg>
-                    <div><strong>Gérez votre profil</strong><span>Retrouvez vos informations et vos préférences.</span></div>
-                </li>
-                <li>
-                    <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M40 17a17 17 0 0 0-28-6L7 16m1-9-1 9 9-1M8 31a17 17 0 0 0 28 6l5-5m-1 9 1-9-9 1"/></svg>
-                    <div><strong>Gérez facilement vos retours</strong><span>Toutes vos demandes au même endroit.</span></div>
-                </li>
             </ul>
 
             <a class="button button-outline register-cta" href="{{ path('app_register') }}">
                 Créer mon compte
                 <span aria-hidden="true">→</span>
             </a>
-            <p class="register-note">Cela ne prend que quelques instants.</p>
         </section>
     </div>
-
-    <section class="login-help" id="aide-connexion">
-        <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M8 28v-5a16 16 0 0 1 32 0v5M8 28H4v10h8V28zm32 0h4v10h-8V28zm0 10c0 4-3 6-8 6h-4"/></svg>
-        <div>
-            <h2>Besoin d’aide pour vous connecter&nbsp;?</h2>
-            <p>Notre service client est à votre écoute.</p>
-        </div>
-        <a class="button button-outline" href="mailto:contact@all4sport.local">Nous contacter</a>
-    </section>
 {% endblock %}

@@ -48,6 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $code = null;
 
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $resetPasswordToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resetPasswordExpiresAt = null;
+
     /**
      * @var Collection<int, Commande>
      */
@@ -178,6 +184,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCode(string $code): static
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function getResetPasswordToken(): ?string
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?string $resetPasswordToken): static
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function getResetPasswordExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->resetPasswordExpiresAt;
+    }
+
+    public function setResetPasswordExpiresAt(?\DateTimeImmutable $resetPasswordExpiresAt): static
+    {
+        $this->resetPasswordExpiresAt = $resetPasswordExpiresAt;
 
         return $this;
     }

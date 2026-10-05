@@ -18,6 +18,7 @@ class SecurityControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
+        $this->client->disableReboot();
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
     }
@@ -82,9 +83,54 @@ class SecurityControllerTest extends WebTestCase
         ]));
 
         self::assertResponseRedirects('/compte');
-        $this->entityManager->refresh($user);
+        $user = $this->reloadUser($user);
         self::assertTrue($this->passwordHasher->isPasswordValid($user, 'nouveau123'));
         self::assertFalse($this->passwordHasher->isPasswordValid($user, 'ancien123'));
+
+        $this->deleteUser($user);
+    }
+
+    public function testUserCanRequestPasswordReset(): void
+    {
+        $user = $this->createUser('oubli@example.com', 'ancien123');
+        $crawler = $this->client->request('GET', '/mot-de-passe-oublie');
+
+        self::assertResponseIsSuccessful();
+        $this->client->submit($crawler->selectButton('Envoyer le lien')->form([
+            'forgot_password_form[email]' => $user->getEmail(),
+        ]));
+
+        self::assertResponseRedirects('/mot-de-passe-oublie');
+        self::assertQueuedEmailCount(1);
+        $user = $this->reloadUser($user);
+        self::assertNotNull($user->getResetPasswordToken());
+        self::assertGreaterThan(new \DateTimeImmutable(), $user->getResetPasswordExpiresAt());
+
+        $this->deleteUser($user);
+    }
+
+    public function testUserCanResetForgottenPassword(): void
+    {
+        $plainToken = bin2hex(random_bytes(32));
+        $user = $this->createUser('reinitialisation@example.com', 'ancien123');
+        $user
+            ->setResetPasswordToken(hash('sha256', $plainToken))
+            ->setResetPasswordExpiresAt(new \DateTimeImmutable('+1 hour'))
+        ;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/reinitialiser-mot-de-passe/'.$plainToken);
+        self::assertResponseIsSuccessful();
+        $this->client->submit($crawler->selectButton('Enregistrer le nouveau mot de passe')->form([
+            'reset_password_form[plainPassword][first]' => 'nouveau123',
+            'reset_password_form[plainPassword][second]' => 'nouveau123',
+        ]));
+
+        self::assertResponseRedirects('/login');
+        $user = $this->reloadUser($user);
+        self::assertTrue($this->passwordHasher->isPasswordValid($user, 'nouveau123'));
+        self::assertNull($user->getResetPasswordToken());
+        self::assertNull($user->getResetPasswordExpiresAt());
 
         $this->deleteUser($user);
     }
@@ -120,7 +166,17 @@ class SecurityControllerTest extends WebTestCase
 
     private function deleteUser(User $user): void
     {
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+        $managedUser = $this->reloadUser($user);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->remove($managedUser);
+        $entityManager->flush();
+    }
+
+    private function reloadUser(User $user): User
+    {
+        $managedUser = static::getContainer()->get(UserRepository::class)->find($user->getId());
+        self::assertInstanceOf(User::class, $managedUser);
+
+        return $managedUser;
     }
 }
