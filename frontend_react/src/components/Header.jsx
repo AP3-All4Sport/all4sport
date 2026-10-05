@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import logo from '../assets/brand/all4sport-logo-dark.svg'
 import Icon from './Icon.jsx'
+import { getCartItems } from '../cart.js'
 
 const navigationItems = [
   { id: 'sports', label: 'Tous les sports', href: '/sports' },
@@ -9,6 +11,18 @@ const navigationItems = [
 ]
 
 export default function Header() {
+  const [cartCount, setCartCount] = useState(() => getCartItems().reduce((total, item) => total + item.quantity, 0))
+
+  useEffect(() => {
+    const updateCartCount = () => setCartCount(getCartItems().reduce((total, item) => total + item.quantity, 0))
+    window.addEventListener('all4sport:cart-updated', updateCartCount)
+    window.addEventListener('storage', updateCartCount)
+    return () => {
+      window.removeEventListener('all4sport:cart-updated', updateCartCount)
+      window.removeEventListener('storage', updateCartCount)
+    }
+  }, [])
+
   function handleSearch(event) {
     event.preventDefault()
     const query = new FormData(event.currentTarget).get('q')?.toString().trim()
@@ -42,10 +56,10 @@ export default function Header() {
             <Icon name="user-round" />
             <span>Mon compte</span>
           </a>
-          <button className="header-action" type="button" disabled aria-label="Panier" title="Panier bientôt disponible">
+          <a className="header-action" href="/panier" aria-label={`Panier${cartCount ? `, ${cartCount} article${cartCount > 1 ? 's' : ''}` : ''}`}>
             <Icon name="shopping-bag" />
-            <span>Panier</span>
-          </button>
+            <span>Panier{cartCount > 0 ? ` (${cartCount})` : ''}</span>
+          </a>
         </div>
       </div>
 

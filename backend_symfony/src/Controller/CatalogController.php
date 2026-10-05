@@ -41,6 +41,17 @@ class CatalogController extends AbstractController
         ]);
     }
 
+    #[Route('/produits/{id}', name: 'api_catalog_product', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function product(int $id, ProduitRepository $products): JsonResponse
+    {
+        $product = $products->find($id);
+        if (null === $product) {
+            return $this->json(['message' => 'Produit introuvable.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        return $this->json(['product' => $this->normalizeProduct($product)]);
+    }
+
     #[Route('/filtres', name: 'api_catalog_filters', methods: ['GET'])]
     public function filters(
         Request $request,
@@ -118,7 +129,8 @@ class CatalogController extends AbstractController
 
     private function normalizeProduct(Produit $product): array
     {
-        $image = $product->getImages()->first();
+        $images = array_values($product->getImages()->map(static fn ($image): ?string => $image->getLibelle())->toArray());
+        $image = $images[0] ?? null;
         $sizes = $product->getTailles()->toArray();
         usort($sizes, static fn ($left, $right): int => $left->getPosition() <=> $right->getPosition());
 
@@ -144,7 +156,8 @@ class CatalogController extends AbstractController
             'previousPrice' => null === $product->getPrixBarre() ? null : (float) $product->getPrixBarre(),
             'rating' => $product->getNote() / 10,
             'reviewCount' => $product->getNombreAvis(),
-            'image' => false === $image ? null : $image->getLibelle(),
+            'image' => $image,
+            'images' => $images,
         ];
     }
 
