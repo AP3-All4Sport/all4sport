@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import ProductCard from './ProductCard.jsx'
-import ocean from '../assets/home/ocean.jpg'
+import cyclisme from '../assets/home/cyclisme.jpg'
+import snowboard from '../assets/home/snowboard.png'
+import volley from '../assets/home/volley.png'
 import homme from '../assets/home/homme.jpg'
 import femme from '../assets/home/femme.jpg'
 import enfant from '../assets/home/enfant.jpg'
@@ -39,9 +41,9 @@ const products = [
   { id: 'play-enfant', name: 'Chaussure FUTURE Play Enfant Jaune/Bleu', brand: 'Puma', category: 'enfant', type: 'Football · Enfant', image: yellowBoot, price: 39.99, description: 'Un modèle coloré pour les jeunes passionnés de football.' },
 ]
 const slides = [
-  { image: ocean, title: 'Le sport au service', second: 'd’un monde', accent: 'meilleur', subtitle: 'Ensemble pour la préservation des océans', label: 'Préserver les océans', action: 'campaign' },
-  { image: homme, title: 'Votre terrain de jeu,', second: 'vos nouvelles', accent: 'envies', subtitle: 'Le style et le sport, au quotidien', label: 'La sélection homme', action: 'homme' },
-  { image: femme, title: 'À chaque mouvement,', second: 'une nouvelle', accent: 'énergie', subtitle: 'Trouvez votre rythme, dépassez-vous', label: 'La sélection femme', action: 'femme' },
+  { image: cyclisme, title: 'Le matériel des champions,', second: 'accessible dès', accent: 'aujourd\'hui', subtitle: 'Pas d\'excuses, juste le bon équipement', label: 'La sélection sport', action: 'campaign' },
+  { image: snowboard, title: 'Votre terrain de jeu,', second: 'vos nouvelles', accent: 'envies', subtitle: 'Le style et le sport, au quotidien', label: 'La sélection homme', action: 'homme' },
+  { image: volley, title: 'À chaque mouvement,', second: 'une nouvelle', accent: 'énergie', subtitle: 'Trouvez votre rythme, dépassez-vous', label: 'La sélection femme', action: 'femme' },
 ]
 const money = (value) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value)
 
@@ -91,10 +93,6 @@ export default function HomePage() {
     window.location.assign('/catalogue?univers=' + encodeURIComponent(category))
   }
 
-  function openCampaign() {
-    setModal({ title: 'Le sport au service d’un monde meilleur', eyebrow: 'Préserver les océans', description: 'La nature est notre plus beau terrain de jeu. Chacun peut contribuer à la préserver, à son échelle.', items: ['Ramasser ses déchets après une sortie et participer aux collectes locales.', 'Privilégier les équipements durables, les réparer et leur donner une seconde vie.', 'Respecter les espaces naturels et les animaux lors de ses activités.'] })
-  }
-
   function findRelay(event) {
     event.preventDefault()
     locationRequest.current += 1
@@ -139,13 +137,11 @@ export default function HomePage() {
           <h1>{slide.title}<br />{slide.second} <span>{slide.accent}</span></h1>
           <p>{slide.subtitle}</p>
           <div className="home-hero-actions">
-            <button className="home-button home-button-orange" type="button" onClick={() => slide.action === 'campaign' ? openCampaign() : chooseCategory(slide.action)}>En savoir plus <Arrow /></button>
-            <button className="home-button home-button-white" type="button" onClick={openCampaign}>Agir pour la planète</button>
+            <button className="home-button home-button-white" type="button" onClick={() => slide.action === 'campaign' ? openCampaign() : chooseCategory(slide.action)}>En savoir plus <Arrow /></button>
           </div>
         </div>
         <button className="home-slider-arrow home-slider-arrow--previous" type="button" aria-label="Diapositive précédente" onClick={() => setSlideIndex((slideIndex + slides.length - 1) % slides.length)}>‹</button>
         <button className="home-slider-arrow home-slider-arrow--next" type="button" aria-label="Diapositive suivante" onClick={() => setSlideIndex((slideIndex + 1) % slides.length)}>›</button>
-        <span className="home-hero-caption">Le sport nous rassemble <span /></span>
         <div className="home-slider-dots">
           {slides.map((item, index) => <button key={item.action} type="button" aria-label={item.label} aria-current={index === slideIndex ? 'true' : undefined} onClick={() => setSlideIndex(index)} />)}
         </div>
