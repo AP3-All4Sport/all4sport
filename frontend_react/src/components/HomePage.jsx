@@ -79,53 +79,11 @@ export default function HomePage() {
   })
   const [notice, setNotice] = useState('')
   const [modal, setModal] = useState(null)
-  const [relay, setRelay] = useState({ postalCode: '', city: '', country: 'France' })
-  const [relayMessage, setRelayMessage] = useState('')
-  const [mapUrl, setMapUrl] = useState('')
-  const [locating, setLocating] = useState(false)
-  const locationRequest = useRef(0)
   const slide = slides[slideIndex]
   const selection = products.filter((product) => (!filter.category || product.category === filter.category) && (!filter.brand || product.brand === filter.brand))
 
-  useEffect(() => () => { locationRequest.current += 1 }, [])
-
   function chooseCategory(category) {
     window.location.assign('/catalogue?univers=' + encodeURIComponent(category))
-  }
-
-  function findRelay(event) {
-    event.preventDefault()
-    locationRequest.current += 1
-    setLocating(false)
-    if (!relay.city.trim() && !relay.postalCode.trim()) {
-      setMapUrl('')
-      setRelayMessage('Indiquez un code postal ou une ville pour lancer la recherche.')
-      return
-    }
-    const query = `point relais locker ${relay.postalCode.trim()} ${relay.city.trim()} ${relay.country}`
-    setMapUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`)
-    setRelayMessage('Votre recherche est prête. Consultez les points relais sur la carte et vérifiez leurs horaires.')
-  }
-
-  function locate() {
-    setMapUrl('')
-    if (!navigator.geolocation) {
-      setRelayMessage('La géolocalisation n’est pas disponible. Saisissez votre ville ou code postal.')
-      return
-    }
-    const request = ++locationRequest.current
-    setLocating(true)
-    setRelayMessage('Recherche de votre position…')
-    navigator.geolocation.getCurrentPosition(({ coords }) => {
-      if (request !== locationRequest.current) return
-      setLocating(false)
-      setMapUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`point relais locker près de ${coords.latitude},${coords.longitude}`)}`)
-      setRelayMessage('Position trouvée. Ouvrez la carte pour consulter les points relais à proximité.')
-    }, () => {
-      if (request !== locationRequest.current) return
-      setLocating(false)
-      setRelayMessage('Position indisponible ou autorisation refusée. Saisissez votre ville ou code postal.')
-    }, { timeout: 10000, maximumAge: 60000 })
   }
 
   return (
@@ -137,7 +95,7 @@ export default function HomePage() {
           <h1>{slide.title}<br />{slide.second} <span>{slide.accent}</span></h1>
           <p>{slide.subtitle}</p>
           <div className="home-hero-actions">
-            <button className="home-button home-button-white" type="button" onClick={() => slide.action === 'campaign' ? openCampaign() : chooseCategory(slide.action)}>En savoir plus <Arrow /></button>
+            <button className="home-button home-button-white" type="button" onClick={() => slide.action === 'campaign' ? window.location.assign('/catalogue?sport=cyclisme') : chooseCategory(slide.action)}>En savoir plus <Arrow /></button>
           </div>
         </div>
         <button className="home-slider-arrow home-slider-arrow--previous" type="button" aria-label="Diapositive précédente" onClick={() => setSlideIndex((slideIndex + slides.length - 1) % slides.length)}>‹</button>
@@ -156,14 +114,14 @@ export default function HomePage() {
         </section>
 
         <section className="home-brands" aria-labelledby="home-brands-title">
-          <div className="home-section-heading"><h2 id="home-brands-title">Nos marques</h2><button type="button" className="home-text-link" onClick={() => setModal({ title: 'Nos marques', description: 'Retrouvez les marques disponibles chez All4Sport.', items: brands.map(({ name }) => name) })}>Voir toutes les marques <Arrow /></button></div>
+          <div className="home-section-heading"><h2 id="home-brands-title">Nos marques</h2></div>
           <div className="home-brand-grid">
             {brands.map(({ name, logo }) => <button className="home-brand" key={name} type="button" aria-pressed={filter.brand === name} onClick={() => { setFilter({ category: '', brand: filter.brand === name ? '' : name }); document.getElementById('home-products')?.scrollIntoView({ block: 'start' }) }}><img className="home-brand-logo" src={logo} alt="" /><span>{name}</span></button>)}
           </div>
         </section>
 
         <section className="home-products" id="home-products" aria-labelledby="home-products-title">
-          <div className="home-section-heading"><h2 id="home-products-title">Les meilleurs crampons de la rentrée !</h2><button className="home-text-link" type="button" onClick={() => { setFilter({ category: '', brand: '' }); setNotice('Les quatre articles de la sélection sont affichés.') }}>Voir tout <Arrow /></button></div>
+          <div className="home-section-heading"><h2 id="home-products-title">Les meilleurs crampons de la rentrée !</h2></div>
           {(filter.category || filter.brand) && <div className="home-filter">Sélection : {filter.brand || categories.find(({ id }) => id === filter.category)?.name}<button type="button" onClick={() => setFilter({ category: '', brand: '' })}>Effacer le filtre ×</button></div>}
           <div className="home-product-grid">
             {selection.map((product) => <ProductCard key={product.id} product={product} onOpen={(selectedProduct) => setModal({ title: selectedProduct.name, description: selectedProduct.description, image: selectedProduct.image, eyebrow: selectedProduct.brand, product: selectedProduct })} />)}
@@ -173,19 +131,6 @@ export default function HomePage() {
         </section>
       </div>
 
-      <section className="home-relay" aria-labelledby="home-relay-title">
-        <div className="site-container">
-          <div className="home-relay-heading"><svg viewBox="0 0 40 52" aria-hidden="true"><path d="M20 1C9 1 1 9 1 20c0 13 19 31 19 31s19-18 19-31C39 9 31 1 20 1Zm0 10a9 9 0 1 1 0 18 9 9 0 0 1 0-18Z" fill="currentColor" /></svg><div><h2 id="home-relay-title">Trouver votre Point Relais ou Locker</h2><p>Retirez vos commandes près de chez vous, facilement et rapidement.</p></div></div>
-          <form className="home-relay-form" onSubmit={findRelay}>
-            <label>Code postal<input name="postalCode" autoComplete="postal-code" placeholder="Saisir un code postal" maxLength="12" value={relay.postalCode} onChange={(event) => { setRelay({ ...relay, postalCode: event.target.value }); setMapUrl('') }} /></label>
-            <label>Ville<input name="city" autoComplete="address-level2" placeholder="Votre ville" maxLength="100" value={relay.city} onChange={(event) => { setRelay({ ...relay, city: event.target.value }); setMapUrl('') }} /></label>
-            <label><span className="home-sr-only">Pays</span><select name="country" autoComplete="country-name" value={relay.country} onChange={(event) => { setRelay({ ...relay, country: event.target.value }); setMapUrl('') }}><option>France</option><option>Belgique</option><option>Luxembourg</option><option>Suisse</option></select></label>
-            <button className="home-button home-button-orange" type="submit">Trouver</button>
-            <button className="home-button home-button-outline" type="button" onClick={locate} disabled={locating}><span aria-hidden="true">◎</span>{locating ? 'Localisation…' : 'Se localiser'}</button>
-          </form>
-          <div className="home-relay-result" role="status"><p>{relayMessage}</p>{mapUrl && <a className="home-text-link" href={mapUrl} target="_blank" rel="noopener noreferrer">Voir les points relais sur Google Maps (nouvel onglet) <Arrow /></a>}</div>
-        </div>
-      </section>
       {modal && <Dialog content={modal} onClose={() => setModal(null)} />}
     </div>
   )
